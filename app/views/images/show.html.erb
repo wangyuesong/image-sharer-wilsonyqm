@@ -1,0 +1,11 @@
+<p>
+  <strong>Title:</strong>
+  <span id="image_title"><%= @image.title %></span>
+</p>
+
+<p>
+  <strong>Image:</strong>
+  <%= image_tag @image.url %>
+</p>
+
+<%= link_to 'Back', images_path %>

@@ -1,0 +1,17 @@
+<h1>Please Insert Your Image</h1>
+<%= form_for :image, url: images_path, html: { id: 'new_image_form' } do |f| %>
+  <p>
+    <%= f.label :title %><br>
+    <%= f.text_field :title %><br>
+  </p>
+
+  <p>
+    <%= f.label :url %><br>
+    <%= f.text_field :url %><br>
+  </p>
+  <p>
+    <%= f.submit %>
+  </p>
+<% end %>
+
+<%= link_to 'Back', images_path %>
