@@ -1,6 +1,6 @@
 class ImagesController < ApplicationController
   def index
-    @hello_world = 'Hello World'
+    @images = Image.all
   end
 
   def show

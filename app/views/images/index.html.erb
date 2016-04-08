@@ -1,2 +1,18 @@
-<h1 id="hello_world"><%= @hello_world %></h1>
-<%= link_to 'Add new image', new_image_path %>
+<h1>Listing of Images</h1>
+
+<%= link_to 'Insert New Images', new_image_path %>
+<% if @images.present? %>
+  <table>
+    <tr>
+      <th>Title</th>
+      <th>Image</th>
+    </tr>
+
+    <% @images.each do |image| %>
+      <tr>
+        <td><%= link_to image.title, image_path(image) %></td>
+        <td><%= image_tag image.url, class: 'image' %></td>
+      </tr>
+    <% end %>
+  </table>
+<% end %>
