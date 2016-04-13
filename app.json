@@ -1,6 +1,7 @@
 {
   "name": "ropes",
   "scripts": {
+    "postdeploy": "rake db:setup"
   },
   "env": {
     "LANG": {
