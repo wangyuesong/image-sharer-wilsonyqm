@@ -24,9 +24,18 @@ class ImagesControllerTest < ActionController::TestCase
 
   test 'create' do
     assert_difference -> { Image.count } do
-      post :create, image: { title: 'some image', url: 'http://someawesomeimage' }
+      post :create, image: { title: 'some image', url: 'http://someawesomeimage.com' }
     end
     assert_redirected_to image_path(assigns(:image))
+  end
+
+  test 'create with invalid params' do
+    assert_no_difference -> { Image.count } do
+      post :create, image: { title: 'some image', url: 'invalid' }
+    end
+    assert_response :unprocessable_entity
+    assert_select '#new_image_form', 1
+    assert_select '.error', {text: 'not a valid URL', count: 1}
   end
 
   test 'show' do
