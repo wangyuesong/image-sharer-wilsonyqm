@@ -1,16 +1,14 @@
 <h1>Please Insert Your Image</h1>
-<%= form_for :image, url: images_path, html: { id: 'new_image_form' } do |f| %>
+<%= simple_form_for @image, url: images_path, html: { id: 'new_image_form', novalidate: '' } do |f| %>
   <p>
-    <%= f.label :title %><br>
-    <%= f.text_field :title %><br>
+    <%= f.input :title %><br>
   </p>
 
   <p>
-    <%= f.label :url %><br>
-    <%= f.text_field :url %><br>
+    <%= f.input :url %><br>
   </p>
   <p>
-    <%= f.submit %>
+    <%= f.submit 'Save Image'%>
   </p>
 <% end %>
 

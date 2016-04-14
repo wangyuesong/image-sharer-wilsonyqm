@@ -58,3 +58,4 @@ group :test do
 end
 
 gem 'browserify-rails'
+gem 'simple_form'
