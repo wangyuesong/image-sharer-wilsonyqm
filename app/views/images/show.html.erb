@@ -1,14 +1,10 @@
-<p>
-  <strong>Title:</strong>
-  <span id="image_title"><%= @image.title %></span>
-</p>
-<p>
-  <strong>Tags:</strong>
-  <span id="image_tags"><%= @image.tag_list %></span>
-</p>
-<p>
-  <strong>Image:</strong>
-  <%= image_tag @image.url %>
-</p>
+<div class="image-detail">
+  <label class="image-detail__label">Title:</label>
+  <p id="image_title"><%= @image.title %></p>
+  <label class="image-detail__label">Tags:</label>
+  <p id="image_tags"><%= @image.tag_list %></p>
+  <label class="image-detail__label">Image:</label>
+  <%= image_tag @image.url, class: 'image-detail__image' %>
+</div>
 
-<%= link_to 'Back', images_path %>
+<%= link_to 'Back', images_path, class: 'btn btn-info' %>

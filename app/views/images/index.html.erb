@@ -1,19 +1,15 @@
-<h1>Listing of Images</h1>
+<%= link_to 'Insert Image', new_image_path, class: 'btn btn-success pull-xs-right' %>
 
-<%= link_to 'Insert New Images', new_image_path %>
-<% if @images.present? %>
-  <table>
-    <tr>
-      <th>Title</th>
-      <th>Image</th>
-    </tr>
+<h1 class="heading">Listing of Images</h1>
 
-    <% @images.each do |image| %>
-      <tr data-image-id=<%= image.id %>>
-        <td><%= link_to image.title, image_path(image) %></td>
-        <td class="test-tags">Tags: <%= image.tag_list %></td>
-        <td><%= image_tag image.url, class: 'image' %></td>
-      </tr>
-    <% end %>
-  </table>
-<% end %>
+<div class="row">
+  <% @images.each do |image| %>
+    <div class="col-sm-6 col-xs-12">
+      <div class="card-block image", data-image-id=<%= image.id %>>
+        <%= image_tag image.url, class: 'card-img-top image__box img-fluid' %>
+        <h2 class="card-title image__title"><%= link_to image.title, image_path(image) %></h2>
+        <h2 class="test-tags image__title">Tags: <%= image.tag_list %></h2>
+      </div>
+    </div>
+  <% end %>
+</div>
