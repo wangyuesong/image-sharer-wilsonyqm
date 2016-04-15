@@ -9,8 +9,9 @@
     </tr>
 
     <% @images.each do |image| %>
-      <tr>
+      <tr data-image-id=<%= image.id %>>
         <td><%= link_to image.title, image_path(image) %></td>
+        <td class="test-tags">Tags: <%= image.tag_list %></td>
         <td><%= image_tag image.url, class: 'image' %></td>
       </tr>
     <% end %>

@@ -2,7 +2,10 @@
   <strong>Title:</strong>
   <span id="image_title"><%= @image.title %></span>
 </p>
-
+<p>
+  <strong>Tags:</strong>
+  <span id="image_tags"><%= @image.tag_list %></span>
+</p>
 <p>
   <strong>Image:</strong>
   <%= image_tag @image.url %>

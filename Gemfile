@@ -57,5 +57,6 @@ group :test do
   gem 'selenium-webdriver'
 end
 
+gem 'acts-as-taggable-on', '~> 3.4'
 gem 'browserify-rails'
 gem 'simple_form'

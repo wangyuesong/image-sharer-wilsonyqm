@@ -37,4 +37,12 @@ class ImageTest < ActiveSupport::TestCase
     assert_predicate image, :invalid?
     assert_equal ['is too short (minimum is 2 characters)'], image.errors[:title]
   end
+
+  test 'image with tags' do
+    img = Image.create!(url: 'http://www.horniman.info/DKNSARC/SD04/IMAGES/D4P1570C.JPG', title: 'title', tag_list: 'tag1, tag2')
+    assert_equal %w(tag1 tag2), img.tag_list
+
+    img.tag_list = 'tag3'
+    assert_equal %w(tag3), img.tag_list
+  end
 end
