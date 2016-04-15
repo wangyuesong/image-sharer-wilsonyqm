@@ -12,10 +12,13 @@ class ImagesControllerTest < ActionController::TestCase
 
     get :index
     assert_response :success
+    assert_select 'img', count: 2
+    assert_select "img[src=\"#{url1}\"]", 1
+    assert_select "img[src=\"#{url2}\"]", 1
 
     images.each do |image|
-      assert_select "tr[data-image-id=\"#{image.id}\"] img[src=\"#{image.url}\"]", 1
-      assert_select "tr[data-image-id=\"#{image.id}\"] .test-tags", text: "Tags: #{image.tag_list}"
+      assert_select "div[data-image-id=\"#{image.id}\"] img[src=\"#{image.url}\"]", 1
+      assert_select "div[data-image-id=\"#{image.id}\"] .test-tags", text: "Tags: #{image.tag_list}"
     end
   end
 
@@ -38,7 +41,7 @@ class ImagesControllerTest < ActionController::TestCase
     end
     assert_response :unprocessable_entity
     assert_select '#new_image_form', 1
-    assert_select '.error', {text: 'not a valid URL', count: 1}
+    assert_select '.help-block', {text: 'not a valid URL', count: 1}
   end
 
   test 'show' do

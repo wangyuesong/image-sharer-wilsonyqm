@@ -1,14 +1,21 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>Ropes</title>
-  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
-  <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
-  <%= csrf_meta_tags %>
-</head>
-<body>
+  <head>
+    <title>Ropes</title>
+    <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track' => true %>
+    <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+    <%= csrf_meta_tags %>
+  </head>
 
-<%= yield %>
+  <body class="page-wrapper">
+    <%= render partial: 'layouts/navbar' %>
 
-</body>
+    <div class="page-wrapper__content">
+      <div class="container m-t-4">
+        <%= yield %>
+      </div>
+    </div>
+
+    <%= render partial: 'layouts/footer' %>
+  </body>
 </html>

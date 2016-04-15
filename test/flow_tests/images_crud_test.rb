@@ -8,20 +8,20 @@ class ImagesCrudTest < FlowTestCase
 
     visit(root_path)
 
-    click_link('Insert New Images')
+    click_link('Insert Image')
 
     page.assert_selector('#new_image_form')
 
     fill_in('Title', with: title)
-    fill_in('Url', with: invalid_url)
+    fill_in('URL', with: invalid_url)
 
     click_on('Save Image')
 
     page.assert_selector('#new_image_form')
-    page.assert_selector('.error', text: 'not a valid URL', count: 1)
+    page.assert_selector('.help-block', text: 'not a valid URL', count: 1)
 
     fill_in('Title', with: title)
-    fill_in('Url', with: valid_url)
+    fill_in('URL', with: valid_url)
 
     click_on('Save Image')
 

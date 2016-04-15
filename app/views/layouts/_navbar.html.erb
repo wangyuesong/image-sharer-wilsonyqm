@@ -1,0 +1,13 @@
+<nav class="navbar navbar-light bg-faded navbar-align">
+  <div class="container">
+    <%= link_to 'ImageList', images_path, class: 'navbar-brand' %>
+    <ul class="nav navbar-nav">
+      <%= nav_item(text: 'Home', path: root_path, is_active: current_page?(images_path) || current_page?(root_path)) %>
+      <%= nav_item(text: 'Create', path: new_image_path, is_active: current_page?(new_image_path)) %>
+    </ul>
+    <form class="form-inline pull-xs-right">
+      <input class="form-control" type="text" placeholder="Search">
+      <button class="btn btn-success-outline" type="submit">Search</button>
+    </form>
+  </div>
+</nav>
