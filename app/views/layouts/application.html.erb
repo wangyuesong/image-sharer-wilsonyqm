@@ -12,14 +12,15 @@
 
     <div class="page-wrapper__content">
       <div class="container m-t-4">
-        <% flash.each do |type, message| %>
-          <% if flash[type].present? %>
-            <div class="alert alert-<%= type %>">
-              <%= message %>
-            </div>
+        <div id="flash_messages">
+          <% flash.each do |type, message| %>
+            <% if flash[type].present? %>
+              <div class="alert alert-<%= type %>">
+                <%= message %>
+              </div>
+            <% end %>
           <% end %>
-        <% end %>
-
+        </div>
         <%= yield %>
       </div>
     </div>

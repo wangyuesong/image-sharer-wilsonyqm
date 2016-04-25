@@ -1,10 +1,2 @@
-<div class="image-detail">
-  <label class="image-detail__label">Title:</label>
-  <p id="image_title"><%= @image.title %></p>
-  <label class="image-detail__label">Tags:</label>
-  <p id="image_tags"><%= @image.tag_list %></p>
-  <label class="image-detail__label">Image:</label>
-  <%= image_tag @image.url, class: 'image-detail__image' %>
-</div>
-
+<%= render @image %>
 <%= link_to 'Back', images_path, class: 'btn btn-info' %>
