@@ -1,0 +1,10 @@
+<div class="image-detail">
+  <%= link_to image.title, image_path(image), class: 'image-detail__title' %>
+  <p>
+    <span class="image-detail__label">Tags:</span>
+    <span class="image-detail__tags"><%= image.tag_list %></span>
+  </p>
+  <%= image_tag image.url, class: 'image-detail__box' %>
+</div>
+<%= link_to 'Delete', image_path(image), method: :delete, 'data-confirm': 'Are you sure?',
+            class: 'btn btn-danger'%>

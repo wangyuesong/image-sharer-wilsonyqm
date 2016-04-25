@@ -2,12 +2,22 @@
   margin-bottom: 30px;
 }
 
-.image-detail__image {
+.image-detail__box {
+  border: 1px #555 solid;
   max-width: 400px;
 }
 
 .image-detail__label {
-  display: block;
   font-size: 20px;
   font-weight: bold;
+}
+
+.image-detail__tags {
+  font-size: 20px;
+  font-weight: normal;
+}
+
+.image-detail__title {
+  font-size: 20px;
+  font-weight: normal;
 }
