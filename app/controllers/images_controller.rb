@@ -1,6 +1,12 @@
 class ImagesController < ApplicationController
   def index
-    @images = Image.all
+    tag = params[:tag]
+    if tag.present?
+      @images = Image.tagged_with(tag)
+      flash.now[:danger] = "No images are tagged with #{tag}" if @images.empty?
+    else
+      @images = Image.all
+    end
   end
 
   def show

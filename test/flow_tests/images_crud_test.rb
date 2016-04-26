@@ -64,4 +64,22 @@ class ImagesCrudTest < FlowTestCase
     page.assert_selector('#flash_messages', text: 'Image does not exist', count: 1 )
     page.assert_selector("img[src=\"#{image_to_delete.url}\"]", count: 0)
   end
+
+  test 'click on tag' do
+    url1 = 'http://images.mazdausa.com/MusaWeb/musa2/images/vlp/panels/M6G/exterior-view/soulred/black/img_vlp_360_m6g_soulred_black_01_lg.jpg'
+    url2 = 'http://carphotos.cardomain.com/images/0004/43/95/4053459.JPG'
+    url3 = 'http://carphotos.cardomain.com/images/0004/43/95/4053459.JPG'
+    images = Image.create!([
+      { title: 'image1', url: url1, tag_list: 'mazda6, red' },
+      { title: 'image2', url: url2, tag_list: 'mazda6, grey' },
+      { title: 'image3', url: url3, tag_list: 'mazda3, white' }
+    ])
+    visit(images_path)
+    page.assert_selector('img', count: 3)
+    page.find("div[data-image-id=\"#{images[0].id}\"] a[class=\"btn btn-success\"]", text: 'mazda6').click
+    page.assert_current_path(images_path(tag: 'mazda6'))
+    page.assert_selector('img', count: 2)
+    page.assert_selector("img[src=\"#{url1}\"]", count: 1)
+    page.assert_selector("img[src=\"#{url2}\"]", count: 1)
+  end
 end

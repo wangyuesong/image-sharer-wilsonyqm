@@ -4,24 +4,53 @@ class ImagesControllerTest < ActionController::TestCase
   test 'index with images' do
     url1 = 'http://www.horniman.info/DKNSARC/SD04/IMAGES/D4P1570C.JPG'
     url2 = 'http://images.all-free-download.com/images/graphiclarge/page_90297.jpg'
-    image_attributes = [
-      { title: 'image1', url: url1, tag_list: 'tag1, tag2' },
-      { title: 'image2', url: url2, tag_list: 'tag3, tag4' }
-    ]
-    images = image_attributes.map { |attributes| Image.create!(attributes) }
-
+    url3 = 'http://carphotos.cardomain.com/images/0004/43/95/4053459.JPG'
+    images = Image.create!([
+      { title: 'image1', url: url1, tag_list: 'mazda6, red' },
+      { title: 'image2', url: url2, tag_list: 'mazda6, grey' },
+      { title: 'image3', url: url3, tag_list: 'sometag' }
+    ])
     get :index
     assert_response :success
-    assert_select 'img', count: 2
+    assert_select 'img', count: 3
     assert_select "img[src=\"#{url1}\"]", 1
     assert_select "img[src=\"#{url2}\"]", 1
 
     images.each do |image|
       assert_select "div[data-image-id=\"#{image.id}\"] img[src=\"#{image.url}\"]", 1
-      assert_select "div[data-image-id=\"#{image.id}\"] .image-detail__tags", text: "#{image.tag_list}"
+      assert_select "div[data-image-id=\"#{image.id}\"] .image-detail__tags .btn" do |elements|
+        assert_equal image.tag_list, elements.map(&:text)
+      end
     end
   end
 
+  test 'index with tags' do
+    url1 = 'http://images.mazdausa.com/MusaWeb/musa2/images/vlp/panels/M6G/
+            exterior-view/soulred/black/img_vlp_360_m6g_soulred_black_01_lg.jpg'
+    url2 = 'http://carphotos.cardomain.com/images/0004/43/95/4053459.JPG'
+    url3 = 'http://www.horniman.info/DKNSARC/SD04/IMAGES/D4P1570C.JPG'
+    Image.create!([
+      { title: 'image1', url: url1, tag_list: 'mazda6, red' },
+      { title: 'image2', url: url2, tag_list: 'mazda6, grey' },
+      { title: 'image3', url: url3, tag_list: 'sometag' }
+    ])
+    get :index, tag: 'mazda6'
+    assert_response :success
+    assert_select 'img', count: 2
+    assert_select "img[src=\"#{url1}\"]", 1
+    assert_select "img[src=\"#{url2}\"]", 1
+  end
+
+  test 'index with non-exist tag' do
+    url1 = 'http://images.mazdausa.com/MusaWeb/musa2/images/vlp/panels/M6G/
+                exterior-view/soulred/black/img_vlp_360_m6g_soulred_black_01_lg.jpg'
+    Image.create!(title: 'image1', url: url1, tag_list: 'mazda6, grey')
+    get :index, tag: 'mazda3'
+    assert_response :success
+    assert_equal "No images are tagged with mazda3", flash[:danger]
+    assert_select 'img', count: 0
+    assert_select '.image-detail__tags .btn', text: 'mazda6', count: 0
+  end
   test 'new' do
     get :new
     assert_response :success
@@ -41,18 +70,20 @@ class ImagesControllerTest < ActionController::TestCase
     end
     assert_response :unprocessable_entity
     assert_select '#new_image_form', 1
-    assert_select '.help-block', { text: 'not a valid URL', count: 1 }
+    assert_select '.help-block', text: 'not a valid URL', count: 1
   end
 
   test 'show' do
     image_url = 'http://www.horniman.info/DKNSARC/SD04/IMAGES/D4P1570C.JPG'
-    image     = Image.create!(title: 'test3Img', url: image_url, tag_list: 'tag1, tag2')
+    image = Image.create!(title: 'test3Img', url: image_url, tag_list: 'tag1, tag2')
 
     get :show, id: image
     assert_response :success
     assert_select "img[src=\"#{image_url}\"]", 1
     assert_select '.image-detail__title', text: 'test3Img'
-    assert_select '.image-detail__tags', text: 'tag1, tag2'
+    assert_select '.image-detail__tags .btn' do |elements|
+      assert_equal image.tag_list, elements.map(&:text)
+    end
   end
 
   test 'show with empty tags' do
