@@ -2,9 +2,9 @@
 
 <h1 class="heading">Listing of Images</h1>
 
-<div class="row">
+<div id="images_list" class="row">
   <% @images.each do |image| %>
-    <div class="col-sm-6 col-xs-12">
+    <div class="js-image-card col-sm-6 col-xs-12">
       <div class="card-block img-fluid", data-image-id=<%= image.id %>>
         <%= render image %>
       </div>

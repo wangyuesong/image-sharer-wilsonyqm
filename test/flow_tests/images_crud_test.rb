@@ -7,8 +7,8 @@ class ImagesCrudTest < FlowTestCase
     new_image_page = images_index_page.add_new_image!
 
     tags = %w(foo bar)
-    new_image_page = new_image_page.create_image!(url: 'invalid', tags: tags.join(', ')).as_a(PageObjects::Images::NewPage)
-    assert_equal 'must be a valid URL', new_image_page.url.error_message
+    new_image_page = new_image_page.create_image!(url: 'invalid', tags: tags.join(', '), title: 'title').as_a(PageObjects::Images::NewPage)
+    assert_equal 'not a valid URL', new_image_page.url.error_message
 
     image_url = 'https://media3.giphy.com/media/EldfH1VJdbrwY/200.gif'
     new_image_page.url.set(image_url)
@@ -27,8 +27,8 @@ class ImagesCrudTest < FlowTestCase
     cute_puppy_url = 'http://ghk.h-cdn.co/assets/16/09/980x490/landscape-1457107485-gettyimages-512366437.jpg'
     ugly_cat_url = 'http://www.ugly-cat.com/ugly-cats/uglycat041.jpg'
     Image.create!([
-      { url: cute_puppy_url, tag_list: 'puppy, cute' },
-      { url: ugly_cat_url, tag_list: 'cat, ugly' }
+      { url: cute_puppy_url, tag_list: 'puppy, cute', title: 'test1' },
+      { url: ugly_cat_url, tag_list: 'cat, ugly', title: 'test2' }
     ])
 
     images_index_page = PageObjects::Images::IndexPage.visit
@@ -47,7 +47,7 @@ class ImagesCrudTest < FlowTestCase
     end
 
     images_index_page = image_show_page.delete_and_confirm!
-    assert_equal 'You have successfully deleted the image.', images_index_page.flash_message(:success)
+    assert_equal 'Image deleted', images_index_page.flash_message(:success)
 
     assert_equal 1, images_index_page.images.count
     refute images_index_page.is_showing_image?(url: ugly_cat_url)
@@ -59,9 +59,9 @@ class ImagesCrudTest < FlowTestCase
     puppy_url_2 = 'http://ghk.h-cdn.co/assets/16/09/980x490/landscape-1457107485-gettyimages-512366437.jpg'
     cat_url = 'http://www.ugly-cat.com/ugly-cats/uglycat041.jpg'
     Image.create!([
-      { url: puppy_url_1, tag_list: 'superman, cute' },
-      { url: puppy_url_2, tag_list: 'cute, puppy' },
-      { url: cat_url, tag_list: 'cat, ugly' }
+      { url: puppy_url_1, tag_list: 'superman, cute', title: 'test1' },
+      { url: puppy_url_2, tag_list: 'cute, puppy', title: 'test2' },
+      { url: cat_url, tag_list: 'cat, ugly', title: 'test3' }
     ])
 
     images_index_page = PageObjects::Images::IndexPage.visit
