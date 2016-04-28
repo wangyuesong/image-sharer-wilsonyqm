@@ -1,85 +1,97 @@
 require 'flow_test_helper'
 
 class ImagesCrudTest < FlowTestCase
-  test 'create a new image' do
-    title       = 'flowtest'
-    invalid_url = 'hn:jfieow'
-    valid_url   = 'http://www.horniman.info/DKNSARC/SD04/IMAGES/D4P1570C.JPG'
+  test 'add an image' do
+    images_index_page = PageObjects::Images::IndexPage.visit
 
-    visit(root_path)
+    new_image_page = images_index_page.add_new_image!
 
-    click_link('Insert Image')
+    tags = %w(foo bar)
+    new_image_page = new_image_page.create_image!(url: 'invalid', tags: tags.join(', '), title: 'title').as_a(PageObjects::Images::NewPage)
+    assert_equal 'not a valid URL', new_image_page.url.error_message
 
-    page.assert_selector('#new_image_form')
+    image_url = 'https://media3.giphy.com/media/EldfH1VJdbrwY/200.gif'
+    new_image_page.url.set(image_url)
 
-    fill_in('Title', with: title)
-    fill_in('URL', with: invalid_url)
+    image_show_page = new_image_page.create_image!
+    assert_equal 'You have successfully added an image.', image_show_page.flash_message(:success)
 
-    click_on('Save Image')
+    assert image_show_page.has_url?(image_url)
+    assert_equal tags, image_show_page.tags
 
-    page.assert_selector('#new_image_form')
-    page.assert_selector('.help-block', text: 'not a valid URL', count: 1)
-
-    fill_in('Title', with: title)
-    fill_in('URL', with: valid_url)
-
-    click_on('Save Image')
-
-    page.assert_current_path(image_path(Image.last))
-    page.assert_selector("img[src=\"#{valid_url}\"]", count: 1)
+    images_index_page = image_show_page.go_back_to_index!
+    assert images_index_page.is_showing_image?(url: image_url, tags: tags)
   end
 
   test 'delete an image' do
-    image1 = Image.create!(title: 'delete_test_1', url: 'http://www.horniman.info/DKNSARC/SD04/IMAGES/D4P1570C.JPG')
-    image_to_delete = Image.create!(title: 'delete_test_2', url: 'https://upload.wikimedia.org/wikipedia/commons/9/92/Colorful_spring_garden.jpg')
-    visit(root_path)
-    page.assert_selector("img[src=\"#{image_to_delete.url}\"]", count: 1)
-    page.assert_selector("img[src=\"#{image1.url}\"]", count: 1)
-
-    dismiss_confirm('Are you sure') do
-      page.find("div[data-image-id=\"#{image_to_delete.id}\"] a[data-method=\"delete\"]").click
-    end
-    page.assert_selector("img[src=\"#{image_to_delete.url}\"]", count: 1)
-    page.assert_no_text('Image deleted')
-
-    accept_confirm('Are you sure') do
-      page.find("div[data-image-id=\"#{image_to_delete.id}\"] a[data-method=\"delete\"]").click
-    end
-    page.assert_current_path(images_path)
-    page.assert_selector("img[src=\"#{image_to_delete.url}\"]", count: 0)
-    page.assert_selector("img[src=\"#{image1.url}\"]", count: 1)
-    page.assert_selector('#flash_messages', count: 1, text: 'Image deleted' )
-  end
-
-  test 'delete an not exist image' do
-    image_to_delete = Image.create!(title: 'delete_test_2', url: 'https://upload.wikimedia.org/wikipedia/commons/9/92/Colorful_spring_garden.jpg')
-    visit(root_path)
-    page.assert_selector("img[src=\"#{image_to_delete.url}\"]", count: 1)
-    image_to_delete.destroy!
-    page.assert_selector("img[src=\"#{image_to_delete.url}\"]", count: 1)
-    accept_confirm('Are you sure') do
-      page.find("div[data-image-id=\"#{image_to_delete.id}\"] a[data-method=\"delete\"]").click
-    end
-    page.assert_current_path(images_path)
-    page.assert_selector('#flash_messages', text: 'Image does not exist', count: 1 )
-    page.assert_selector("img[src=\"#{image_to_delete.url}\"]", count: 0)
-  end
-
-  test 'click on tag' do
-    url1 = 'http://images.mazdausa.com/MusaWeb/musa2/images/vlp/panels/M6G/exterior-view/soulred/black/img_vlp_360_m6g_soulred_black_01_lg.jpg'
-    url2 = 'http://carphotos.cardomain.com/images/0004/43/95/4053459.JPG'
-    url3 = 'http://carphotos.cardomain.com/images/0004/43/95/4053459.JPG'
-    images = Image.create!([
-      { title: 'image1', url: url1, tag_list: 'mazda6, red' },
-      { title: 'image2', url: url2, tag_list: 'mazda6, grey' },
-      { title: 'image3', url: url3, tag_list: 'mazda3, white' }
+    cute_puppy_url = 'http://ghk.h-cdn.co/assets/16/09/980x490/landscape-1457107485-gettyimages-512366437.jpg'
+    ugly_cat_url = 'http://www.ugly-cat.com/ugly-cats/uglycat041.jpg'
+    Image.create!([
+      { url: cute_puppy_url, tag_list: 'puppy, cute', title: 'test1' },
+      { url: ugly_cat_url, tag_list: 'cat, ugly', title: 'test2' }
     ])
-    visit(images_path)
-    page.assert_selector('img', count: 3)
-    page.find("div[data-image-id=\"#{images[0].id}\"] a[class=\"btn btn-success\"]", text: 'mazda6').click
-    page.assert_current_path(images_path(tag: 'mazda6'))
-    page.assert_selector('img', count: 2)
-    page.assert_selector("img[src=\"#{url1}\"]", count: 1)
-    page.assert_selector("img[src=\"#{url2}\"]", count: 1)
+
+    images_index_page = PageObjects::Images::IndexPage.visit
+    assert_equal 2, images_index_page.images.count
+    assert images_index_page.is_showing_image?(url: ugly_cat_url)
+    assert images_index_page.is_showing_image?(url: cute_puppy_url)
+
+    image_to_delete = images_index_page.images.find do |image|
+      image.url == ugly_cat_url
+    end
+    image_show_page = image_to_delete.view!
+
+    image_show_page.delete do |confirm_dialog|
+      assert_equal 'Are you sure?', confirm_dialog.text
+      confirm_dialog.dismiss
+    end
+
+    images_index_page = image_show_page.delete_and_confirm!
+    assert_equal 'Image deleted', images_index_page.flash_message(:success)
+
+    assert_equal 1, images_index_page.images.count
+    refute images_index_page.is_showing_image?(url: ugly_cat_url)
+    assert images_index_page.is_showing_image?(url: cute_puppy_url)
+  end
+
+  test 'try to delete a nonexistent image' do
+    ugly_cat_url = 'http://www.ugly-cat.com/ugly-cats/uglycat041.jpg'
+    image = Image.create!(url: ugly_cat_url, tag_list: 'cat, ugly', title: 'test2' )
+    images_index_page = PageObjects::Images::IndexPage.visit
+    assert_equal 1, images_index_page.images.count
+    assert images_index_page.is_showing_image?(url: ugly_cat_url)
+    image_to_delete = images_index_page.images.find do |image|
+      image.url == ugly_cat_url
+    end
+    image_show_page = image_to_delete.view!
+    image.destroy!
+    images_index_page = image_show_page.delete_and_confirm!
+    assert_equal 'Image does not exist', images_index_page.flash_message(:danger)
+    assert_equal 0, images_index_page.images.count
+    refute images_index_page.is_showing_image?(url: ugly_cat_url)
+  end
+
+  test 'view images associated with a tag' do
+    puppy_url_1 = 'http://www.pawderosa.com/images/puppies.jpg'
+    puppy_url_2 = 'http://ghk.h-cdn.co/assets/16/09/980x490/landscape-1457107485-gettyimages-512366437.jpg'
+    cat_url = 'http://www.ugly-cat.com/ugly-cats/uglycat041.jpg'
+    Image.create!([
+      { url: puppy_url_1, tag_list: 'superman, cute', title: 'test1' },
+      { url: puppy_url_2, tag_list: 'cute, puppy', title: 'test2' },
+      { url: cat_url, tag_list: 'cat, ugly', title: 'test3' }
+    ])
+
+    images_index_page = PageObjects::Images::IndexPage.visit
+    [puppy_url_1, puppy_url_2, cat_url].each do |url|
+      assert images_index_page.is_showing_image?(url: url)
+    end
+
+    images_index_page = images_index_page.images[1].click_tag!('cute')
+
+    assert_equal 2, images_index_page.images.count
+    refute images_index_page.is_showing_image?(url: cat_url)
+
+    images_index_page = images_index_page.clear_tag_filter!
+    assert_equal 3, images_index_page.images.count
   end
 end

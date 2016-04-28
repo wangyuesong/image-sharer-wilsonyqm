@@ -2,6 +2,6 @@
 <%= simple_form_for @image, url: images_path, html: { id: 'new_image_form', novalidate: '' } do |f| %>
   <%= f.input :title, label: 'Title:' %><br>
   <%= f.input :url, label: 'URL:' %><br>
-  <%= f.input :tag_list, label: 'Tags: (seperated by commas)' %><br>
+  <%= f.input :tag_list, label: 'Tags: (seperated by commas)', input_html: {value: @image.tag_list.join(', ')} %><br>
   <%= f.submit 'Save Image', class: 'btn btn-primary' %> <%= link_to 'Back', images_path, class: 'btn btn-info' %>
 <% end %>
