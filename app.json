@@ -4,6 +4,9 @@
     "postdeploy": "rake db:setup"
   },
   "env": {
+    "APP_URL": {
+      "required": true
+    },
     "LANG": {
       "required": true
     },

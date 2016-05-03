@@ -37,5 +37,9 @@ module Ropes
     config.active_record.raise_in_transactional_callbacks = true
 
     config.browserify_rails.commandline_options = '-t babelify'
+
+    config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
+
+    ActionMailer::Base.delivery_method = :smtp
   end
 end
