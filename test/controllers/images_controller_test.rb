@@ -66,7 +66,7 @@ class ImagesControllerTest < ActionController::TestCase
 
   test 'create with invalid params' do
     assert_no_difference -> { Image.count } do
-      post :create, image: { title: 'some image', url: 'invalid' }
+      post :create, image: { title: 'some image', url: 'invalid', tag_list: 'tag' }
     end
     assert_response :unprocessable_entity
     assert_select '#new_image_form', 1
@@ -86,17 +86,9 @@ class ImagesControllerTest < ActionController::TestCase
     end
   end
 
-  test 'show with empty tags' do
-    image_url = 'http://www.horniman.info/DKNSARC/SD04/IMAGES/D4P1570C.JPG'
-    image1    = Image.create!(title: 'test3Img', url: image_url, tag_list: '')
-    get :show, id: image1
-    assert_response :success
-    assert_select '.image-detail__tags', text: ''
-  end
-
   test 'delete redirect to index page with one less image' do
     image_url = 'http://www.horniman.info/DKNSARC/SD04/IMAGES/D4P1570C.JPG'
-    image     = Image.create!(title: 'test4Img', url: image_url, tag_list: '')
+    image     = Image.create!(title: 'test4Img', url: image_url, tag_list: 'tag')
     assert_difference 'Image.count', -1 do
       delete :destroy, id: image
     end
