@@ -120,4 +120,62 @@ class ImagesControllerTest < ActionController::TestCase
     assert_select '#new_share_form', 1
     assert_select "img[src=\"#{image_url}\"]", 1
   end
+
+  test 'create share image valid email test' do
+    image_url = 'http://www.horniman.info/DKNSARC/SD04/IMAGES/D4P1570C.JPG'
+    image1 = Image.create!(title: 'test3Img', url: image_url, tag_list: '')
+    params = {
+      id: image1,
+      share_form: {
+        subject: 'some image form',
+        recipient: 'some@jief.com',
+        content: 'create_test'
+      }
+    }
+    assert_difference 'ActionMailer::Base.deliveries.size' do
+      post :create_share, params
+    end
+    assert_equal 'Shared it!', flash[:success]
+    assert_redirected_to images_path
+    email = ActionMailer::Base.deliveries.last
+    assert_equal 'some image form', email.subject
+    assert_equal ['some@jief.com'], email.to
+    assert_includes email.text_part.body.to_s, 'create_test'
+  end
+
+  test 'create share image invalid email test' do
+    image_url = 'http://www.horniman.info/DKNSARC/SD04/IMAGES/D4P1570C.JPG'
+    image1 = Image.create!(title: 'test3Img', url: image_url, tag_list: '')
+    params = {
+      id: image1,
+      share_form: {
+        subject: 'some image form',
+        recipient: 'someinvalidemail.com',
+        content: 'create_test'
+      }
+    }
+    assert_no_difference 'ActionMailer::Base.deliveries.size' do
+      post :create_share, params
+    end
+    assert_response :unprocessable_entity
+    assert_select '#new_share_form', 1
+    assert_select '.help-block', text: 'is not a valid email address', count: 1
+    assert_select "img[src=\"#{image_url}\"]", 1
+  end
+
+  test 'share nonexistent image' do
+    params = {
+      id: -1,
+      share_form: {
+        subject: 'some image form',
+        recipient: 'someinvalidemail.com',
+        content: 'create_test'
+      }
+    }
+    assert_no_difference 'ActionMailer::Base.deliveries.size' do
+      post :create_share, params
+    end
+    assert_equal 'Image you want to share does not exist', flash[:danger]
+    assert_redirected_to images_path
+  end
 end

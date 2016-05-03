@@ -32,6 +32,25 @@ class ImagesController < ApplicationController
     @share_form = ShareForm.new
   end
 
+# TODO: rename to just `share` once we refactor to a modal
+
+  def create_share
+    @image = Image.find_by(id: params[:id])
+    if @image.present?
+      @share_form = ShareForm.new(params[:share_form])
+      if @share_form.valid?
+        ImageMailer.send_email(@image, @share_form).deliver_now
+        flash[:success] = 'Shared it!'
+        redirect_to images_path
+      else
+        render :new_share, status: :unprocessable_entity
+      end
+    else
+      flash[:danger] = 'Image you want to share does not exist'
+      redirect_to images_path
+    end
+  end
+
   def destroy
     @image = Image.find_by(id: params[:id])
     if @image.present?
