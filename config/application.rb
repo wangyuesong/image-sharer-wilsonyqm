@@ -25,7 +25,7 @@ module Ropes
     # https://github.com/twbs/bootstrap/issues/17964
     csp_settings = ["connect-src 'self'",
                     "default-src 'none'",
-                    'font-src https://cdn.jsdelivr.net',
+                    "font-src 'self' https://cdn.jsdelivr.net",
                     "img-src 'self' http: https:",
                     "script-src 'self' 'unsafe-eval'",
                     "style-src 'self' https://cdn.jsdelivr.net"]
@@ -37,5 +37,9 @@ module Ropes
     config.active_record.raise_in_transactional_callbacks = true
 
     config.browserify_rails.commandline_options = '-t babelify'
+
+    config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
+
+    ActionMailer::Base.delivery_method = :smtp
   end
 end

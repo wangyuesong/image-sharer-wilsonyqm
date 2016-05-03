@@ -4,8 +4,10 @@ Rails.application.routes.draw do
 
   # You can have the root of your site routed with "root"
   root 'images#index'
-
-  resources :images, only: [:create, :new, :index, :show, :destroy]
+  resources :images, only: [:create, :new, :index, :show, :destroy] do
+    get :new_share, on: :member
+    post :create_share, on: :member
+  end
 
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'

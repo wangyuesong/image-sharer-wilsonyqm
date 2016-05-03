@@ -1,0 +1,13 @@
+<p>
+  Hi <%= @recipient %>, This is a message with an image<br>
+</p>
+<p>
+  The image is: <%= image_tag @url %>
+</p>
+<% if @content.present? %>
+  <p>The content is: <%= @content %></p>
+<% end %>
+<p>
+  You're welcome to check our application on: <%= root_url %>
+</p>
+

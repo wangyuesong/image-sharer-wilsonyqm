@@ -13,6 +13,11 @@ module PageObjects
         node.click_on(tag_name)
         window.change_to(IndexPage)
       end
+
+      def share!
+        node.click_on('Share')
+        window.change_to(ShareNewPage)
+      end
     end
   end
 end
