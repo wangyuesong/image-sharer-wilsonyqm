@@ -1,0 +1,9 @@
+Hi <%= @recipient %>, This is a message with an image
+
+The image is: <%= @url %>
+
+<% if @content.present? %>
+The content is: <%= @content %>
+<% end %>
+
+You're welcome to check our application on: <%= root_url %>
