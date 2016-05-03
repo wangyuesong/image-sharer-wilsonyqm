@@ -27,6 +27,11 @@ class ImagesController < ApplicationController
     end
   end
 
+  def new_share
+    @image = Image.find(params[:id])
+    @share_form = ShareForm.new
+  end
+
   def destroy
     @image = Image.find_by(id: params[:id])
     if @image.present?

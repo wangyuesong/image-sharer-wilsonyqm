@@ -111,4 +111,13 @@ class ImagesControllerTest < ActionController::TestCase
     assert_redirected_to images_path
     assert_equal 'Image does not exist', flash[:danger]
   end
+
+  test 'new share image test' do
+    image_url = 'http://www.horniman.info/DKNSARC/SD04/IMAGES/D4P1570C.JPG'
+    image1    = Image.create!(title: 'test3Img', url: image_url, tag_list: '')
+    get :new_share, id: image1
+    assert_response :success
+    assert_select '#new_share_form', 1
+    assert_select "img[src=\"#{image_url}\"]", 1
+  end
 end

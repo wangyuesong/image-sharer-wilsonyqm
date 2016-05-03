@@ -4,6 +4,9 @@ $enable-flex: true;
 
 @import 'utilities';
 
+@import "font-awesome-sprockets";
+@import "font-awesome";
+
 @import 'footer';
 @import 'form-group';
 @import 'heading';
