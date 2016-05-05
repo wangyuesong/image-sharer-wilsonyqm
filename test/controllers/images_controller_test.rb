@@ -106,7 +106,7 @@ class ImagesControllerTest < ActionController::TestCase
 
   test 'new share image test' do
     image_url = 'http://www.horniman.info/DKNSARC/SD04/IMAGES/D4P1570C.JPG'
-    image1    = Image.create!(title: 'test3Img', url: image_url, tag_list: '')
+    image1    = Image.create!(title: 'test3Img', url: image_url, tag_list: 'tag')
     get :new_share, id: image1
     assert_response :success
     assert_select '#new_share_form', 1
@@ -115,7 +115,7 @@ class ImagesControllerTest < ActionController::TestCase
 
   test 'create share image valid email test' do
     image_url = 'http://www.horniman.info/DKNSARC/SD04/IMAGES/D4P1570C.JPG'
-    image1 = Image.create!(title: 'test3Img', url: image_url, tag_list: '')
+    image1 = Image.create!(title: 'test3Img', url: image_url, tag_list: 'tag')
     params = {
       id: image1,
       share_form: {
@@ -137,7 +137,7 @@ class ImagesControllerTest < ActionController::TestCase
 
   test 'create share image invalid email test' do
     image_url = 'http://www.horniman.info/DKNSARC/SD04/IMAGES/D4P1570C.JPG'
-    image1 = Image.create!(title: 'test3Img', url: image_url, tag_list: '')
+    image1 = Image.create!(title: 'test3Img', url: image_url, tag_list: 'tag')
     params = {
       id: image1,
       share_form: {
