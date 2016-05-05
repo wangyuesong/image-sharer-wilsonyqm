@@ -21,10 +21,17 @@
     },
     "SECRET_KEY_BASE": {
       "generator": "secret"
+    },
+    "SENDGRID_PASSWORD": {
+      "required": true
+    },
+    "SENDGRID_USERNAME": {
+      "required": true
     }
   },
   "addons": [
-    "heroku-postgresql"
+    "heroku-postgresql",
+    "sendgrid:starter"
   ],
   "buildpacks": [
     {
