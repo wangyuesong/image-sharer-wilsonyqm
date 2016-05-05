@@ -10,6 +10,7 @@ class Image < ActiveRecord::Base
               with:    VALID_URL_FORMAT,
               message: 'not a valid URL'
             }
+  validates :tag_list, presence: true
 
   acts_as_taggable
 end
