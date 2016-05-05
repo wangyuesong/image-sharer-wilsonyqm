@@ -36,5 +36,6 @@ module PageObjects
 end
 
 AePageObjects::Element.include(PageObjects::Extensions::ElementInlineErrorMessage)
+AePageObjects::Node.include(PageObjects::Extensions::DynamicElementDeclaration)
 
 PageObjects::Site.initialize!
