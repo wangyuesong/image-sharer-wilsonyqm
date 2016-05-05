@@ -1,2 +1,4 @@
 <%= render @image %>
+<%= link_to 'Delete', image_path(@image), method: :delete, 'data-confirm': 'Are you sure?',
+            class: 'btn btn-danger' %>
 <%= link_to 'Back', images_path, class: 'btn btn-info' %>
