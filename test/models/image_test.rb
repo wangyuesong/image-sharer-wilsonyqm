@@ -1,6 +1,8 @@
 require 'test_helper'
 
 class ImageTest < ActiveSupport::TestCase
+  include ImageCreation
+
   test 'Image is valid' do
     valid_urls = ['https://hfuehfweui.com', 'http://hfuehfweui.com', 'http://hfuehfweui.com.gov.cn', 'http://www.foo.bar/baz/qux.png']
     valid_urls.each do |valid_url|
@@ -50,11 +52,5 @@ class ImageTest < ActiveSupport::TestCase
     image = new_image(tag_list: '')
     assert_predicate image, :invalid?
     assert_equal ["can't be blank"], image.errors[:tag_list]
-  end
-
-  private
-
-  def new_image(title: 'test_valid_url', url: 'https://hfuehfweui.com', tag_list: 'tag')
-    Image.new(title: title, url: url, tag_list: tag_list)
   end
 end

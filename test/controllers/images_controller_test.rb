@@ -1,11 +1,13 @@
 require 'test_helper'
 
 class ImagesControllerTest < ActionController::TestCase
+  include ImageCreation
+
   test 'index with images' do
     url1 = 'http://www.horniman.info/DKNSARC/SD04/IMAGES/D4P1570C.JPG'
     url2 = 'http://images.all-free-download.com/images/graphiclarge/page_90297.jpg'
     url3 = 'http://carphotos.cardomain.com/images/0004/43/95/4053459.JPG'
-    images = Image.create!([
+    images = create_images([
       { title: 'image1', url: url1, tag_list: 'mazda6, red' },
       { title: 'image2', url: url2, tag_list: 'mazda6, grey' },
       { title: 'image3', url: url3, tag_list: 'sometag' }
@@ -29,7 +31,7 @@ class ImagesControllerTest < ActionController::TestCase
             exterior-view/soulred/black/img_vlp_360_m6g_soulred_black_01_lg.jpg'
     url2 = 'http://carphotos.cardomain.com/images/0004/43/95/4053459.JPG'
     url3 = 'http://www.horniman.info/DKNSARC/SD04/IMAGES/D4P1570C.JPG'
-    Image.create!([
+    create_images([
       { title: 'image1', url: url1, tag_list: 'mazda6, red' },
       { title: 'image2', url: url2, tag_list: 'mazda6, grey' },
       { title: 'image3', url: url3, tag_list: 'sometag' }
@@ -44,7 +46,7 @@ class ImagesControllerTest < ActionController::TestCase
   test 'index with non-exist tag' do
     url1 = 'http://images.mazdausa.com/MusaWeb/musa2/images/vlp/panels/M6G/
                 exterior-view/soulred/black/img_vlp_360_m6g_soulred_black_01_lg.jpg'
-    Image.create!(title: 'image1', url: url1, tag_list: 'mazda6, grey')
+    create_image(title: 'image1', url: url1, tag_list: 'mazda6, grey')
     get :index, tag: 'mazda3'
     assert_response :success
     assert_equal "No images are tagged with mazda3", flash[:danger]
@@ -75,7 +77,7 @@ class ImagesControllerTest < ActionController::TestCase
 
   test 'show' do
     image_url = 'http://www.horniman.info/DKNSARC/SD04/IMAGES/D4P1570C.JPG'
-    image = Image.create!(title: 'test3Img', url: image_url, tag_list: 'tag1, tag2')
+    image = create_image(title: 'test3Img', url: image_url, tag_list: 'tag1, tag2')
 
     get :show, id: image
     assert_response :success
@@ -88,7 +90,7 @@ class ImagesControllerTest < ActionController::TestCase
 
   test 'delete redirect to index page with one less image' do
     image_url = 'http://www.horniman.info/DKNSARC/SD04/IMAGES/D4P1570C.JPG'
-    image     = Image.create!(title: 'test4Img', url: image_url, tag_list: 'tag')
+    image = create_image(title: 'test4Img', url: image_url, tag_list: 'tag')
     assert_difference 'Image.count', -1 do
       delete :destroy, id: image
     end
@@ -106,7 +108,7 @@ class ImagesControllerTest < ActionController::TestCase
 
   test 'new share image test' do
     image_url = 'http://www.horniman.info/DKNSARC/SD04/IMAGES/D4P1570C.JPG'
-    image1    = Image.create!(title: 'test3Img', url: image_url, tag_list: 'tag')
+    image1    = create_image(title: 'test3Img', url: image_url, tag_list: 'tag')
     get :new_share, id: image1
     assert_response :success
     assert_select '#new_share_form', 1
@@ -115,7 +117,7 @@ class ImagesControllerTest < ActionController::TestCase
 
   test 'create share image valid email test' do
     image_url = 'http://www.horniman.info/DKNSARC/SD04/IMAGES/D4P1570C.JPG'
-    image1 = Image.create!(title: 'test3Img', url: image_url, tag_list: 'tag')
+    image1 = create_image(title: 'test3Img', url: image_url, tag_list: 'tag')
     params = {
       id: image1,
       share_form: {
@@ -137,7 +139,7 @@ class ImagesControllerTest < ActionController::TestCase
 
   test 'create share image invalid email test' do
     image_url = 'http://www.horniman.info/DKNSARC/SD04/IMAGES/D4P1570C.JPG'
-    image1 = Image.create!(title: 'test3Img', url: image_url, tag_list: 'tag')
+    image1 = create_image(title: 'test3Img', url: image_url, tag_list: 'tag')
     params = {
       id: image1,
       share_form: {

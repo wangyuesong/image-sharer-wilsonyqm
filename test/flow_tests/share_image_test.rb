@@ -1,9 +1,11 @@
 require 'flow_test_helper'
 
 class ShareImageTest < FlowTestCase
+  include ImageCreation
+
   test 'share image' do
     puppy_url_2 = 'http://ghk.h-cdn.co/assets/16/09/980x490/landscape-1457107485-gettyimages-512366437.jpg'
-    Image.create!(url: puppy_url_2, tag_list: 'superman, cute', title: 'test1')
+    create_image(url: puppy_url_2, tag_list: 'superman, cute', title: 'test1')
 
     images_index_page = PageObjects::Images::IndexPage.visit
     image_share_page = images_index_page.images[0].share!
@@ -21,7 +23,7 @@ class ShareImageTest < FlowTestCase
 
   test 'share nonexistent image' do
     puppy_url_2 = 'http://ghk.h-cdn.co/assets/16/09/980x490/landscape-1457107485-gettyimages-512366437.jpg'
-    image_to_share = Image.create!(url: puppy_url_2, tag_list: 'superman, cute', title: 'test1')
+    image_to_share = create_image(url: puppy_url_2, tag_list: 'superman, cute', title: 'test1')
     images_index_page = PageObjects::Images::IndexPage.visit
     image_share_page = images_index_page.images[0].share!
     assert_equal image_share_page.image_url, puppy_url_2
