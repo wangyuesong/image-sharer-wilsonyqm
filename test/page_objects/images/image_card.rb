@@ -14,9 +14,17 @@ module PageObjects
         window.change_to(IndexPage)
       end
 
-      def share!
+      def open_share_modal
         node.click_on('Share')
-        window.change_to(ShareNewPage)
+        share_modal = document.element(locator: '#share_modal', is: ShareModal)
+        share_modal.wait_until_visible
+        share_modal
+      end
+
+      def share(&block)
+        share_modal = open_share_modal
+        block.call(share_modal)
+        share_modal.wait_until_hidden
       end
     end
   end

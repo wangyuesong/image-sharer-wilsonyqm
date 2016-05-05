@@ -3,6 +3,9 @@ module PageObjects
     class ShowPage < PageObjects::Document
       path :image
 
+      element :image_card, is: ImageCard
+      delegate :share, to: :image_card
+
       collection :tag_elements, locator: '.image-detail__tags', item_locator: '.js-image-tag'
 
       def has_url?(url)

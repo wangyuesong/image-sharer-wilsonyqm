@@ -11,3 +11,9 @@
     </div>
   <% end %>
 </div>
+
+<%= render partial: 'share_modal' %>
+
+<% content_for :javascript do %>
+  <%= javascript_include_tag 'images/index' %>
+<% end %>

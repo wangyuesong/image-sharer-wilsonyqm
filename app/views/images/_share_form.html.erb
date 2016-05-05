@@ -1,12 +1,28 @@
-<%= simple_form_for @share_form, as: :share_form, url: create_share_image_path(@image), html: { novalidate: '' } do |f| %>
-  <p class="image-detail">
-    <p class="image-detail__label">Image:</p>
-    <p><%= image_tag @image.url, class: 'image-detail__box' %></p>
-  </p>
+<%= simple_form_for (@share_form || ImagesController::ShareForm.new),
+                    as: :share_form,
+                    url: share_image_path(id: @image || ':id'),
+                    html: { novalidate: '' },
+                    remote: true do |f| %>
+  <div class="modal-body">
+    <p class="image-detail">
+      <p class="image-detail__label">Image:</p>
+      <p><%= image_tag @image.try(:url), class: 'image-detail__box' %></p>
+    </p>
 
-  <%= f.input :subject, label: 'Email Subject:', placeholder: 'Hi Look At This Image' %>
-  <%= f.input :recipient, label: 'Recipient:', placeholder: 'user@domain.com' %>
-  <%= f.input :content, label: 'Content:', as: :text, placeholder: 'What you wanna tell me' %>
+    <%= f.input :subject,
+                label: 'Email Subject:',
+                placeholder: 'Hi Look At This Image' %>
+    <%= f.input :recipient,
+                label: 'Recipient:',
+                placeholder: 'user@domain.com' %>
+    <%= f.input :content,
+                label: 'Content:',
+                as: :text,
+                placeholder: 'What you wanna tell me' %>
+  </div>
 
-  <%= f.submit 'Share Image', class: 'btn btn-primary' %>
+  <div class="modal-footer">
+    <%= f.submit 'Share Image', class: 'btn btn-primary' %>
+    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+  </div>
 <% end %>
