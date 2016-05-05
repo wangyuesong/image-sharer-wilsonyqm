@@ -5,7 +5,7 @@
 <div id="images_list" class="row">
   <% @images.each do |image| %>
     <div class="js-image-card col-sm-6 col-xs-12">
-      <div class="card-block img-fluid", data-image-id=<%= image.id %>>
+      <div class="card-block img-fluid" data-image-id="<%= image.id %>">
         <%= render image %>
       </div>
     </div>
