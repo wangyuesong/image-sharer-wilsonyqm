@@ -1,8 +1,10 @@
 require 'test_helper'
 
 class ImageMailerTest < ActionMailer::TestCase
+  include ImageCreation
+
   test 'share image with valid email' do
-    image = Image.create!(title: 'share image test', url: 'http://something.com', tag_list: 'some, thing, here')
+    image = create_image(title: 'share image test', url: 'http://something.com', tag_list: 'some, thing, here')
     params = {
       subject:   'shareform',
       recipient: 'qiaomu@gmail.com',
@@ -24,7 +26,7 @@ class ImageMailerTest < ActionMailer::TestCase
   end
 
   test 'share image with empty subject' do
-    image = Image.create!(
+    image = create_image(
       title: 'share image test',
       url: 'http://something.com',
       tag_list: 'some, thing, here'
@@ -50,7 +52,7 @@ class ImageMailerTest < ActionMailer::TestCase
   end
 
   test 'share image with empty content' do
-    image = Image.create!(
+    image = create_image(
       title: 'share image test',
       url: 'http://something.com',
       tag_list: 'some, thing, here'

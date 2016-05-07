@@ -1,6 +1,8 @@
 require 'flow_test_helper'
 
 class ImagesCrudTest < FlowTestCase
+  include ImageCreation
+
   test 'add an image' do
     images_index_page = PageObjects::Images::IndexPage.visit
 
@@ -27,7 +29,7 @@ class ImagesCrudTest < FlowTestCase
   test 'delete an image' do
     cute_puppy_url = 'http://ghk.h-cdn.co/assets/16/09/980x490/landscape-1457107485-gettyimages-512366437.jpg'
     ugly_cat_url = 'http://www.ugly-cat.com/ugly-cats/uglycat041.jpg'
-    Image.create!([
+    create_images([
       { url: cute_puppy_url, tag_list: 'puppy, cute', title: 'test1' },
       { url: ugly_cat_url, tag_list: 'cat, ugly', title: 'test2' }
     ])
@@ -57,7 +59,7 @@ class ImagesCrudTest < FlowTestCase
 
   test 'try to delete a nonexistent image' do
     ugly_cat_url = 'http://www.ugly-cat.com/ugly-cats/uglycat041.jpg'
-    image = Image.create!(url: ugly_cat_url, tag_list: 'cat, ugly', title: 'test2' )
+    image = create_image(url: ugly_cat_url, tag_list: 'cat, ugly', title: 'test2' )
     images_index_page = PageObjects::Images::IndexPage.visit
     assert_equal 1, images_index_page.images.count
     assert images_index_page.is_showing_image?(url: ugly_cat_url)
@@ -76,7 +78,7 @@ class ImagesCrudTest < FlowTestCase
     puppy_url_1 = 'http://www.pawderosa.com/images/puppies.jpg'
     puppy_url_2 = 'http://ghk.h-cdn.co/assets/16/09/980x490/landscape-1457107485-gettyimages-512366437.jpg'
     cat_url = 'http://www.ugly-cat.com/ugly-cats/uglycat041.jpg'
-    Image.create!([
+    create_images([
       { url: puppy_url_1, tag_list: 'superman, cute', title: 'test1' },
       { url: puppy_url_2, tag_list: 'cute, puppy', title: 'test2' },
       { url: cat_url, tag_list: 'cat, ugly', title: 'test3' }
