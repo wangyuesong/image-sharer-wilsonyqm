@@ -14,7 +14,7 @@ class ImagesControllerTest < ActionController::TestCase
     ])
     get :index
     assert_response :success
-    assert_select 'img', count: 3
+    assert_select '#images_list img', count: 3
     assert_select "img[src=\"#{url1}\"]", 1
     assert_select "img[src=\"#{url2}\"]", 1
 
@@ -38,7 +38,7 @@ class ImagesControllerTest < ActionController::TestCase
     ])
     get :index, tag: 'mazda6'
     assert_response :success
-    assert_select 'img', count: 2
+    assert_select '#images_list img', count: 2
     assert_select "img[src=\"#{url1}\"]", 1
     assert_select "img[src=\"#{url2}\"]", 1
   end
@@ -50,7 +50,7 @@ class ImagesControllerTest < ActionController::TestCase
     get :index, tag: 'mazda3'
     assert_response :success
     assert_equal "No images are tagged with mazda3", flash[:danger]
-    assert_select 'img', count: 0
+    assert_select '#images_list img', count: 0
     assert_select '.image-detail__tags .btn', text: 'mazda6', count: 0
   end
   test 'new' do
@@ -81,7 +81,7 @@ class ImagesControllerTest < ActionController::TestCase
 
     get :show, id: image
     assert_response :success
-    assert_select "img[src=\"#{image_url}\"]", 1
+    assert_select "#image_card img[src=\"#{image_url}\"]", 1
     assert_select '.image-detail__title', text: 'test3Img'
     assert_select '.image-detail__tags .btn' do |elements|
       assert_equal image.tag_list, elements.map(&:text)
@@ -106,18 +106,9 @@ class ImagesControllerTest < ActionController::TestCase
     assert_equal 'Image does not exist', flash[:danger]
   end
 
-  test 'new share image test' do
+  test 'share image with valid email' do
     image_url = 'http://www.horniman.info/DKNSARC/SD04/IMAGES/D4P1570C.JPG'
     image1    = create_image(title: 'test3Img', url: image_url, tag_list: 'tag')
-    get :new_share, id: image1
-    assert_response :success
-    assert_select '#new_share_form', 1
-    assert_select "img[src=\"#{image_url}\"]", 1
-  end
-
-  test 'create share image valid email test' do
-    image_url = 'http://www.horniman.info/DKNSARC/SD04/IMAGES/D4P1570C.JPG'
-    image1 = create_image(title: 'test3Img', url: image_url, tag_list: 'tag')
     params = {
       id: image1,
       share_form: {
@@ -127,17 +118,16 @@ class ImagesControllerTest < ActionController::TestCase
       }
     }
     assert_difference 'ActionMailer::Base.deliveries.size' do
-      post :create_share, params
+      xhr :post, :share, params
     end
-    assert_equal 'Shared it!', flash[:success]
-    assert_redirected_to images_path
+    assert_response :success
     email = ActionMailer::Base.deliveries.last
     assert_equal 'some image form', email.subject
     assert_equal ['some@jief.com'], email.to
     assert_includes email.text_part.body.to_s, 'create_test'
   end
 
-  test 'create share image invalid email test' do
+  test 'share image with invalid email' do
     image_url = 'http://www.horniman.info/DKNSARC/SD04/IMAGES/D4P1570C.JPG'
     image1 = create_image(title: 'test3Img', url: image_url, tag_list: 'tag')
     params = {
@@ -149,12 +139,17 @@ class ImagesControllerTest < ActionController::TestCase
       }
     }
     assert_no_difference 'ActionMailer::Base.deliveries.size' do
-      post :create_share, params
+      xhr :post, :share, params
     end
     assert_response :unprocessable_entity
-    assert_select '#new_share_form', 1
-    assert_select '.help-block', text: 'is not a valid email address', count: 1
-    assert_select "img[src=\"#{image_url}\"]", 1
+    response = JSON.parse(@response.body)
+    form_html = response['form_html']
+    assert_includes form_html, 'new_share_form'
+    assert_includes form_html, image_url
+    assert_includes form_html, 'share_form_subject'
+    assert_includes form_html, 'share_form_content'
+    assert_includes form_html, 'share_form_recipient'
+    assert_includes form_html, 'is not a valid email address'
   end
 
   test 'share nonexistent image' do
@@ -167,9 +162,9 @@ class ImagesControllerTest < ActionController::TestCase
       }
     }
     assert_no_difference 'ActionMailer::Base.deliveries.size' do
-      post :create_share, params
+      xhr :post, :share, params
     end
+    assert_response :not_found
     assert_equal 'Image you want to share does not exist', flash[:danger]
-    assert_redirected_to images_path
   end
 end

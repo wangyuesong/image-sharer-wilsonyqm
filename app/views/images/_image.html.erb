@@ -10,6 +10,11 @@
   </p>
   <%= image_tag image.url, class: 'image-detail__box' %>
 </div>
-<%= link_to new_share_image_path(image), class: 'btn btn-info' do %>
+<button
+  class="btn btn-info"
+  data-toggle="modal"
+  data-target="#share_modal"
+  data-image-url="<%= image.url %>"
+  data-image-id="<%= image.id %>">
   <span class="fa fa-share-alt"></span> Share
-<% end %>
+</button>
