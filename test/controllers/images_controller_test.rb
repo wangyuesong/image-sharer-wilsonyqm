@@ -53,6 +53,7 @@ class ImagesControllerTest < ActionController::TestCase
     assert_select '#images_list img', count: 0
     assert_select '.image-detail__tags .btn', text: 'mazda6', count: 0
   end
+
   test 'new' do
     get :new
     assert_response :success

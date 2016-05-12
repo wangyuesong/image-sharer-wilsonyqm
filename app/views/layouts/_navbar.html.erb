@@ -8,6 +8,9 @@
       <%= nav_item(text: 'Create',
                    path: new_image_path,
                    is_active: current_page?(new_image_path)) %>
+      <%= nav_item(text: 'All Tags',
+                         path: tags_path,
+                         is_active: current_page?(tags_path)) %>
       <% if @current_user.present? %>
         <%= nav_item(alignment: :right,
                      path: logout_path,

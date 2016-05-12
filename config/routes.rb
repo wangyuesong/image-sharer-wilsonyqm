@@ -7,6 +7,7 @@ Rails.application.routes.draw do
   resources :images do
     post :share, on: :member
   end
+  resources :tags, only: :index
 
   get    'signup'  => 'users#new'
   post   'signup'  => 'users#create'

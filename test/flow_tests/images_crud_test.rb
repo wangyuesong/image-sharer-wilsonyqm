@@ -98,6 +98,35 @@ class ImagesCrudTest < FlowTestCase
     assert_equal 3, images_index_page.images.count
   end
 
+  test 'view tags list and click on tag' do
+    puppy_url_1 = 'http://www.pawderosa.com/images/puppies.jpg'
+    puppy_url_2 = 'http://ghk.h-cdn.co/assets/16/09/980x490/landscape-1457107485-gettyimages-512366437.jpg'
+    cat_url = 'http://www.ugly-cat.com/ugly-cats/uglycat041.jpg'
+    create_images([
+      { url: puppy_url_1, tag_list: 'puppy, cute', title: 'test1' },
+      { url: puppy_url_2, tag_list: 'cute, puppy', title: 'test2' },
+      { url: cat_url, tag_list: 'cat, cute', title: 'test3' }
+    ])
+
+    images_index_page = PageObjects::Images::IndexPage.visit
+    tags_index_page = images_index_page.show_tags_list!
+
+    assert_equal ['cute', 'puppy', 'cat'], tags_index_page.tags.map(&:name)
+    tag_to_click = tags_index_page.tags.find do |tag|
+      tag.name== 'cute'
+    end
+    images_index_page = tag_to_click.view!
+    assert_equal 3, images_index_page.images.count
+
+    tags_index_page = images_index_page.show_tags_list!
+    tag_to_click = tags_index_page.tags.find do |tag|
+      tag.name== 'puppy'
+    end
+    images_index_page = tag_to_click.view!
+    assert_equal 2, images_index_page.images.count
+    refute images_index_page.is_showing_image?(url: cat_url)
+  end
+
   test 'edit image tags' do
     puppy_url_1 = 'http://www.pawderosa.com/images/puppies.jpg'
     puppy_url_2 = 'http://ghk.h-cdn.co/assets/16/09/980x490/landscape-1457107485-gettyimages-512366437.jpg'
