@@ -127,6 +127,26 @@ class ImagesControllerTest < ActionController::TestCase
     assert_includes email.text_part.body.to_s, 'create_test'
   end
 
+  test 'share image with user logged in' do
+    image_url = 'http://www.horniman.info/DKNSARC/SD04/IMAGES/D4P1570C.JPG'
+    image1    = create_image(title: 'test3Img', url: image_url, tag_list: 'tag')
+    params = {
+      id: image1,
+      share_form: {
+        subject: 'some image form',
+        recipient: 'some@jief.com',
+        content: 'create_test'
+      }
+    }
+    username = 'username@email.com'
+    password = 'passwd'
+    user = User.create!(email: username, password: password, name: 'name')
+    log_in(user)
+    ImageMailer.expects(:send_email).with(image1, anything, user).returns(mock(:deliver_now))
+    xhr :post, :share, params
+    assert_response :success
+  end
+
   test 'share image with invalid email' do
     image_url = 'http://www.horniman.info/DKNSARC/SD04/IMAGES/D4P1570C.JPG'
     image1 = create_image(title: 'test3Img', url: image_url, tag_list: 'tag')
@@ -166,5 +186,11 @@ class ImagesControllerTest < ActionController::TestCase
     end
     assert_response :not_found
     assert_equal 'Image you want to share does not exist', flash[:danger]
+  end
+
+  private
+
+  def log_in(user)
+    session[:user_id] = user.id
   end
 end
