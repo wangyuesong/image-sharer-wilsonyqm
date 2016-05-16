@@ -32,7 +32,7 @@ class ImagesController < ApplicationController
     if @image.present?
       @share_form = ShareForm.new(params[:share_form])
       if @share_form.valid?
-        ImageMailer.send_email(@image, @share_form).deliver_now
+        ImageMailer.send_email(@image, @share_form, @current_user).deliver_now
         head :ok
       else
         share_form_html = render_to_string partial: 'images/share_form'

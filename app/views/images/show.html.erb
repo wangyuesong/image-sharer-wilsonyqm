@@ -1,8 +1,12 @@
 <div id="image_card">
   <%= render @image %>
-  <%= link_to 'Delete', image_path(@image), method: :delete, 'data-confirm': 'Are you sure?',
-              class: 'btn btn-danger' %>
-  <%= link_to 'Back', images_path, class: 'btn btn-secondary' %>
+  <%= link_to image_path(@image), method: :delete, 'data-confirm': 'Are you sure?',
+              class: 'btn btn-danger' do %>
+    <span class="fa fa-trash"></span> Delete
+  <% end %>
+  <%= link_to images_path, class: 'btn btn-secondary' do %>
+    <span class="fa fa-arrow-left"></span> Back
+  <% end %>
 </div>
 
 <%= render partial: 'share_modal' %>

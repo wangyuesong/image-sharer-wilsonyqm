@@ -1,13 +1,27 @@
 <nav class="navbar navbar-light bg-faded navbar-align">
   <div class="container">
-    <%= link_to 'ImageList', images_path, class: 'navbar-brand' %>
+    <span class="navbar-brand"><%= "Hi! #{ @current_user.name }"  if @current_user.present? %></span>
     <ul class="nav navbar-nav">
-      <%= nav_item(text: 'Home', path: root_path, is_active: current_page?(images_path) || current_page?(root_path)) %>
-      <%= nav_item(text: 'Create', path: new_image_path, is_active: current_page?(new_image_path)) %>
+      <%= nav_item(text: 'ImageList',
+                   path: root_path,
+                   is_active: current_page?(images_path) || current_page?(root_path)) %>
+      <%= nav_item(text: 'Create',
+                   path: new_image_path,
+                   is_active: current_page?(new_image_path)) %>
+      <% if @current_user.present? %>
+        <%= nav_item(alignment: :right,
+                     path: logout_path,
+                     is_active: current_page?(logout_path),
+                     method: :delete) do %>
+          <span class="fa fa-sign-out"></span> Log Out
+        <% end %>
+      <% else %>
+        <%= nav_item(alignment: :right,
+                     is_active: current_page?(login_path) || current_page?(signup_path),
+                     path: login_path) do %>
+          <span class="fa fa-sign-in"></span> Log In / Sign Up
+        <% end %>
+      <% end %>
     </ul>
-    <form class="form-inline pull-xs-right">
-      <input class="form-control" type="text" placeholder="Search">
-      <button class="btn btn-success-outline" type="submit">Search</button>
-    </form>
   </div>
 </nav>

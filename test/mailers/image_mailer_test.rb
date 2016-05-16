@@ -21,6 +21,7 @@ class ImageMailerTest < ActionMailer::TestCase
       assert_includes output, "The content is: #{params[:content]}"
       assert_includes output, params[:recipient]
       assert_includes output, image.url
+      assert_includes output, 'somebody'
       assert_includes output, "You're welcome to check our application on: #{ Rails.application.routes.url_helpers.root_url(host: 'localhost:3000') }"
     end
   end
@@ -47,6 +48,7 @@ class ImageMailerTest < ActionMailer::TestCase
       assert_includes output, "The content is: #{params[:content]}"
       assert_includes output, params[:recipient]
       assert_includes output, image.url
+      assert_includes output, 'somebody'
       assert_includes output, "You're welcome to check our application on: #{ Rails.application.routes.url_helpers.root_url(host: 'localhost:3000') }"
     end
   end
@@ -73,7 +75,43 @@ class ImageMailerTest < ActionMailer::TestCase
       assert_not_includes output, "The content is: #{params[:content]}"
       assert_includes output, params[:recipient]
       assert_includes output, image.url
+      assert_includes output, 'somebody'
       assert_includes output, "You're welcome to check our application on: #{ Rails.application.routes.url_helpers.root_url(host: 'localhost:3000') }"
     end
   end
+
+  test 'share image from a User' do
+    user = User.create!(
+      name: 'user1',
+      email: 'user@some.com',
+      password: '123456',
+      password_confirmation: '123456'
+    )
+    image = create_image(
+      title: 'share image test',
+      url: 'http://something.com',
+      tag_list: 'some, thing, here'
+    )
+    params = {
+      subject: 'some subject',
+      recipient: 'qiaomu@gmail.com',
+      content: ''
+    }
+    share_form = ImagesController::ShareForm.new(params)
+    email = ImageMailer.send_email(image, share_form, user).deliver_now
+
+    assert_not ActionMailer::Base.deliveries.empty?
+    outputs = [email.text_part.body.to_s, email.text_part.body.to_s]
+    assert_equal 'some subject', email.subject
+    assert_equal ['wilsonyqm@gmail.com'], email.from
+    assert_equal ['qiaomu@gmail.com'], email.to
+    outputs.each do |output|
+      assert_not_includes output, "The content is: #{params[:content]}"
+      assert_includes output, params[:recipient]
+      assert_includes output, image.url
+      assert_includes output, user.email
+      assert_includes output, user.name
+      assert_includes output, "You're welcome to check our application on: #{ Rails.application.routes.url_helpers.root_url(host: 'localhost:3000') }"
+    end
+    end
 end
