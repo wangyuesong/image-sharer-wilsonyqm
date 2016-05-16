@@ -6,8 +6,7 @@ class ImagesController
     VALID_EMAIL = /\A([\w+\-]\.?)+@[a-z\d\-]+(\.[a-z]+)*\.[a-z]+\z/i
     validates :recipient,
               presence: true,
-              format: {
-                with: VALID_EMAIL,
+              email_format: {
                 message: 'is not a valid email address'
               }
   end
