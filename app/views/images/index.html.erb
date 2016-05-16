@@ -1,6 +1,11 @@
-<%= link_to 'Insert Image', new_image_path, class: 'btn btn-success pull-xs-right' %>
-
 <h1 class="heading">Listing of Images</h1>
+<div class="row">
+  <div class="col-sm-12">
+    <%= link_to new_image_path, class: 'btn btn-success pull-xs-right' do %>
+      <span class="fa fa-plus"></span> Insert Image
+    <% end %>
+  </div>
+</div>
 
 <div id="images_list" class="row">
   <% @images.each do |image| %>
