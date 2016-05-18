@@ -97,4 +97,30 @@ class ImagesCrudTest < FlowTestCase
     images_index_page = images_index_page.clear_tag_filter!
     assert_equal 3, images_index_page.images.count
   end
+
+  test 'edit image tags' do
+    puppy_url_1 = 'http://www.pawderosa.com/images/puppies.jpg'
+    puppy_url_2 = 'http://ghk.h-cdn.co/assets/16/09/980x490/landscape-1457107485-gettyimages-512366437.jpg'
+    cat_url = 'http://www.ugly-cat.com/ugly-cats/uglycat041.jpg'
+    create_images([
+      { url: puppy_url_1, tag_list: 'superman, cute', title: 'test1' },
+      { url: puppy_url_2, tag_list: 'cute, puppy', title: 'test2' },
+      { url: cat_url, tag_list: 'cat, ugly', title: 'test3' }
+    ])
+    images_index_page = PageObjects::Images::IndexPage.visit
+    image_to_edit = images_index_page.images.find do |image|
+      image.url == cat_url
+    end
+    image_edit_page = image_to_edit.edit_tags!
+    assert_equal 'cat, ugly', image_edit_page.tag_list.value
+    assert image_edit_page.has_img?(cat_url), 'Edit page is not showing the correct image'
+
+    image_edit_page = image_edit_page.save_tags!('').as_a(PageObjects::Images::EditPage)
+    assert_equal "can't be blank", image_edit_page.tag_list.error_message
+
+    images_show_page = image_edit_page.save_tags!('dog, nice')
+    assert_equal 'You successfully change the tags',
+                 images_show_page.flash_message(:success)
+    assert_equal ['dog', 'nice'], images_show_page.image_card.tags
+  end
 end

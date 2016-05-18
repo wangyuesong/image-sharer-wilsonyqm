@@ -9,6 +9,11 @@ module PageObjects
         node.all('.js-image-tag').map(&:text)
       end
 
+      def edit_tags!
+        node.find('.js-edit-tags').click
+        window.change_to(EditPage)
+      end
+
       def click_tag!(tag_name)
         node.click_on(tag_name)
         window.change_to(IndexPage)

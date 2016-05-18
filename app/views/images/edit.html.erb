@@ -1,0 +1,16 @@
+<h1>Update the tags here</h1>
+<%= simple_form_for @image, html: { id: 'edit_image_form', novalidate: '' } do |f| %>
+  <p class="image-detail">
+    <p><%= link_to @image.title, image_path(@image), class: 'image-detail__title' %></p>
+    <%= image_tag @image.url, class: 'image-detail__box' %>
+  </p>
+  <%= f.input :tag_list,
+    label: 'Enter the new tags here: (seperated by commas)',
+    input_html: { value: @image.tag_list.join(', ') } %>
+  <button type="submit" class="btn btn-primary">
+    <span class="fa fa-floppy-o"></span> Save Tags
+  </button>
+  <%= link_to images_path, class: 'btn btn-secondary' do %>
+    <span class="fa fa-arrow-left"></span> Back
+  <% end %>
+<% end %>
