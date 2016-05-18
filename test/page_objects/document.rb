@@ -13,5 +13,10 @@ module PageObjects
       node.click_on('Log Out')
       window.change_to(Images::IndexPage)
     end
+
+    def show_tags_list!
+      node.click_on('All Tags')
+      window.change_to(Tags::IndexPage)
+    end
   end
 end
