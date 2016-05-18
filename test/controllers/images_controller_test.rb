@@ -106,6 +106,48 @@ class ImagesControllerTest < ActionController::TestCase
     assert_equal 'Image does not exist', flash[:danger]
   end
 
+  test 'edit tags' do
+    image_url = 'http://www.horniman.info/DKNSARC/SD04/IMAGES/D4P1570C.JPG'
+    image = create_image(title: 'test5Img', url: image_url, tag_list: 'tag1, tag2')
+
+    get :edit, id: image
+
+    assert_response :success
+    assert_select "img[src=\"#{image_url}\"]", 1
+    assert_select '#edit_image_form', 1
+    assert_select '.image-detail__title', text: 'test5Img'
+  end
+
+  test 'update tags' do
+    image_url = 'http://www.horniman.info/DKNSARC/SD04/IMAGES/D4P1570C.JPG'
+    image = create_image(title: 'test5Img', url: image_url, tag_list: 'tag1, tag2')
+    new_tag_list = 'tag4, tag3, tag1'
+
+    patch :update, id: image, image: { tag_list: new_tag_list }
+    image.reload
+
+    assert_redirected_to image_path(image)
+    assert_equal 'You successfully change the tags', flash[:success]
+    assert_equal ['tag1', 'tag4', 'tag3'], image.tag_list
+  end
+
+  test 'update tags to empty' do
+    image_url    = 'http://www.horniman.info/DKNSARC/SD04/IMAGES/D4P1570C.JPG'
+    image        = create_image(title: 'test6Img', url: image_url, tag_list: 'tag1, tag2')
+    new_tag_list = ''
+    new_url = 'http://carphotos.cardomain.com/images/0004/43/95/4053459.JPG'
+
+    patch :update, id: image, image: { tag_list: new_tag_list, url: new_url }
+    image.reload
+
+    assert_response :unprocessable_entity
+    assert_select '.help-block', text: "can't be blank", count: 1
+    assert_select "img[src=\"#{image_url}\"]", 1
+    assert_select '#edit_image_form', 1
+    assert_select '.image-detail__title', text: 'test6Img'
+    assert_equal ['tag1', 'tag2'], image.tag_list
+  end
+
   test 'share image with valid email' do
     image_url = 'http://www.horniman.info/DKNSARC/SD04/IMAGES/D4P1570C.JPG'
     image1    = create_image(title: 'test3Img', url: image_url, tag_list: 'tag')

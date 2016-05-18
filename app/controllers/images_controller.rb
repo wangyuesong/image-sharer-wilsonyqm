@@ -1,4 +1,6 @@
 class ImagesController < ApplicationController
+  before_action :find_image, only: [:show, :edit, :update]
+
   def index
     tag = params[:tag]
     if tag.present?
@@ -10,7 +12,6 @@ class ImagesController < ApplicationController
   end
 
   def show
-    @image = Image.find(params[:id])
   end
 
   def new
@@ -55,9 +56,26 @@ class ImagesController < ApplicationController
     redirect_to images_path
   end
 
+  def edit
+  end
+
+  def update
+    new_tags =  params[:image][:tag_list]
+    if @image.update_attributes(tag_list: new_tags)
+      flash[:success] = 'You successfully change the tags'
+      redirect_to image_path(@image)
+    else
+      render :edit, status: :unprocessable_entity
+    end
+  end
+
   private
 
   def image_params
     params.require(:image).permit(:title, :url, :tag_list)
+  end
+
+  def find_image
+    @image = Image.find(params[:id])
   end
 end

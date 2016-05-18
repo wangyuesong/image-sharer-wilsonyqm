@@ -4,7 +4,7 @@ Rails.application.routes.draw do
 
   # You can have the root of your site routed with "root"
   root 'images#index'
-  resources :images, only: [:create, :new, :index, :show, :destroy] do
+  resources :images do
     post :share, on: :member
   end
 
