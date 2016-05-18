@@ -3,5 +3,10 @@
   <%= f.input :title, label: 'Title:' %>
   <%= f.input :url, label: 'URL:' %>
   <%= f.input :tag_list, label: 'Tags: (seperated by commas)', input_html: {value: @image.tag_list.join(', ')} %>
-  <%= f.submit 'Save Image', class: 'btn btn-primary' %> <%= link_to 'Back', images_path, class: 'btn btn-info' %>
+  <button type="submit" class="btn btn-primary">
+    <span class="fa fa-floppy-o"></span> Save Image
+  </button>
+  <%= link_to images_path, class: 'btn btn-secondary' do %>
+    <span class="fa fa-arrow-left"></span> Back
+  <% end %>
 <% end %>
