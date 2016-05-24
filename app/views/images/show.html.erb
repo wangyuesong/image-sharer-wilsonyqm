@@ -1,11 +1,13 @@
 <div id="image_card">
   <%= render @image %>
-  <%= link_to image_path(@image), method: :delete, 'data-confirm': 'Are you sure?',
-              class: 'btn btn-danger' do %>
-    <span class="fa fa-trash"></span> Delete
+  <% if @user_can_destroy_image %>
+    <%= link_to image_path(@image), method: :delete, 'data-confirm': 'Are you sure?',
+                class: 'btn btn-danger' do %>
+      <span class="js-delete-btn fa fa-trash"></span> Delete
+    <% end %>
   <% end %>
   <%= link_to images_path, class: 'btn btn-secondary' do %>
-    <span class="fa fa-arrow-left"></span> Back
+    <span class="js-back-btn fa fa-arrow-left"></span> Back
   <% end %>
 </div>
 

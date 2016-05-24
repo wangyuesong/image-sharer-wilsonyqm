@@ -10,7 +10,7 @@ class SessionsController < ApplicationController
       log_in user
       remember(user) if params[:session][:remember_me] == '1'
       flash[:success] = 'Welcome to the Share Image App!'
-      redirect_to images_path
+      redirect_back_or(images_path)
     else
       flash[:danger] = 'Invalid password/username'
       render 'new', status: :unprocessable_entity
@@ -24,7 +24,7 @@ class SessionsController < ApplicationController
     else
       flash[:info] = 'You are already logged out'
     end
-    redirect_to images_path
+    redirect_back_or(images_path)
   end
 
   private
@@ -44,5 +44,10 @@ class SessionsController < ApplicationController
       flash[:info] = 'You are already logged in'
       redirect_to images_path
     end
+  end
+
+  def redirect_back_or(default)
+    redirect_to(session[:forwarding_url] || default)
+    session.delete(:forwarding_url)
   end
 end

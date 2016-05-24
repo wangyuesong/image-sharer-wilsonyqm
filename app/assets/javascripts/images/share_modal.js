@@ -3,6 +3,7 @@ import setFlashMessage from './set_flash_message'
 
 const UNPROCESSABLE_ENTITY = 422;
 const NOT_FOUND = 404;
+const UNAUTHORIZED = 401;
 
 class ShareModal {
   constructor(modalSelector) {
@@ -33,6 +34,8 @@ class ShareModal {
         this.$modal.find('form').replaceWith(responseJSON.form_html);
       } else if (status == NOT_FOUND) {
         window.location = '/';
+      } else if (status == UNAUTHORIZED) {
+        window.location = '/login';
       } else {
         alert('Sorry, an unexpected error occurred. Please try again');
       }

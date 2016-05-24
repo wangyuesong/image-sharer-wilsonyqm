@@ -12,6 +12,13 @@ class FlowTestCase < ActiveSupport::TestCase
   include Rails.application.routes.url_helpers
 
   fixtures :all
+
+  def log_in_as(user)
+    PageObjects::LoginPage.visit.log_in!(
+      email: user[:email],
+      password: 'password'
+    )
+  end
 end
 
 # Tip 3 from http://blog.plataformatec.com.br/2011/12/three-tips-to-improve-the-performance-of-your-test-suite/

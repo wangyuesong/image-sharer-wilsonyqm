@@ -3,12 +3,16 @@ require 'flow_test_helper'
 class ShareImageTest < FlowTestCase
   include ImageCreation
 
+  teardown do
+    Capybara.current_session.reset!
+  end
+
   test 'share image' do
     puppy_url_2 = 'http://ghk.h-cdn.co/assets/16/09/980x490/landscape-1457107485-gettyimages-512366437.jpg'
     create_image(url: puppy_url_2, tag_list: 'superman, cute', title: 'test1')
 
+    log_in_as(users(:default_user))
     images_index_page = PageObjects::Images::IndexPage.visit
-
     images_index_page.images[0].share do |share_modal|
       assert_equal puppy_url_2, share_modal.image_url
       share_modal.subject.set('subject')
@@ -26,8 +30,10 @@ class ShareImageTest < FlowTestCase
     puppy_url_2 = 'http://ghk.h-cdn.co/assets/16/09/980x490/landscape-1457107485-gettyimages-512366437.jpg'
     image_to_share = create_image(url: puppy_url_2, tag_list: 'superman, cute', title: 'test1')
 
+    log_in_as(users(:default_user))
     images_index_page = PageObjects::Images::IndexPage.visit
     share_modal = images_index_page.images[0].open_share_modal
+
     assert_equal puppy_url_2, share_modal.image_url
     share_modal.subject.set('subject')
     share_modal.recipient.set('valid@fmail.com')
@@ -43,6 +49,7 @@ class ShareImageTest < FlowTestCase
   test 'share on show page' do
     puppy_url_2 = 'http://ghk.h-cdn.co/assets/16/09/980x490/landscape-1457107485-gettyimages-512366437.jpg'
     create_image(url: puppy_url_2, tag_list: 'superman, cute', title: 'test1')
+    log_in_as(users(:default_user))
     images_index_page = PageObjects::Images::IndexPage.visit
 
     image_to_share = images_index_page.images.find do |image|
@@ -70,10 +77,14 @@ class ShareImageTest < FlowTestCase
       { url: cute_puppy_url, tag_list: 'puppy, cute', title: 'test1' },
       { url: ugly_cat_url, tag_list: 'cat, ugly', title: 'test2' }
     ])
+    log_in_as(users(:default_user))
     images_index_page = PageObjects::Images::IndexPage.visit
 
-    images_index_page.images[0].share do |share_modal|
-      assert_equal cute_puppy_url, share_modal.image_url
+    image_to_share = images_index_page.images.find do |image|
+        image.url == ugly_cat_url
+    end
+    image_to_share.share do |share_modal|
+      assert_equal ugly_cat_url, share_modal.image_url
       share_modal.subject.set('subject')
       share_modal.recipient.set('invalid')
       share_modal.content.set('some content')
@@ -82,8 +93,11 @@ class ShareImageTest < FlowTestCase
       share_modal.close_modal
     end
 
-    images_index_page.images[1].share do |share_modal|
-      assert_equal ugly_cat_url, share_modal.image_url
+    image_to_share = images_index_page.images.find do |image|
+        image.url == cute_puppy_url
+    end
+    image_to_share.share do |share_modal|
+      assert_equal cute_puppy_url, share_modal.image_url
       assert_empty share_modal.recipient.text
       assert_empty share_modal.content.text
       assert_empty share_modal.subject.text

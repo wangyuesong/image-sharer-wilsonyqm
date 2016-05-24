@@ -10,15 +10,17 @@
   </p>
   <%= image_tag image.url, class: 'image-detail__box' %>
 </div>
-<button
-  class="btn btn-info"
-  data-toggle="modal"
-  data-target="#share_modal"
-  data-image-url="<%= image.url %>"
-  data-image-id="<%= image.id %>">
-  <span class="fa fa-share-alt"></span> Share
-</button>
-<%= link_to edit_image_path(image),
-            class: 'js-edit-tags btn btn-warning' do %>
-  <span class="fa fa-pencil-square-o"></span> Edit Tags
+<% if @current_user.present? %>
+  <button
+    class="js-share-btn btn btn-info"
+    data-toggle="modal"
+    data-target="#share_modal"
+    data-image-url="<%= image.url %>"
+    data-image-id="<%= image.id %>">
+    <span class="fa fa-share-alt"></span> Share
+  </button>
+  <%= link_to edit_image_path(image),
+              class: 'js-edit-tags btn btn-warning' do %>
+    <span class="fa fa-pencil-square-o"></span> Edit Tags
+  <% end %>
 <% end %>
