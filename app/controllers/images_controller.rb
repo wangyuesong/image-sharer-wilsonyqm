@@ -19,7 +19,7 @@ class ImagesController < ApplicationController
   end
 
   def create
-    @image = Image.new(image_params)
+    @image = Image.new(image_params.merge(user: @current_user))
     if @image.save
       redirect_to @image
       flash[:success] = 'You have successfully added an image.'

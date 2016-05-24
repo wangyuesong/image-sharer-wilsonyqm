@@ -6,6 +6,8 @@
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 
+user = User.create!(email: 'qiaomu@appfolio.com', name: 'Qiaomu', password: 'password')
+
 image_urls = ['http://www.appfolio.com/images/html/apm-fb-logo.png',
               'http://www.appfolio.com/images/html/apm-mobile-nav2-logo.png',
               'http://leaserentmanage.com/wp-content/uploads/2014/09/appfolio.png',
@@ -27,4 +29,4 @@ image_urls = ['http://www.appfolio.com/images/html/apm-fb-logo.png',
               'http://www.rawfoodlife.com/iStock_000009999916Small.jpg',
               'http://www.splendidtable.org/sites/default/files/styles/lede_image/public/food%20rainbow.jpg?itok=KX25XbIW']
 
-Image.create!(image_urls.map.with_index { |url, i| { title: "image_seed_#{i}", url: url, tag_list: 'tag' } })
+Image.create!(image_urls.map.with_index { |url, i| { title: "image_seed_#{i}", url: url, tag_list: 'tag', user: user } })

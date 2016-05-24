@@ -1,6 +1,8 @@
 class Image < ActiveRecord::Base
   VALID_URL_FORMAT = %r!(^$)|(^(http|https)://[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(([0-9]{1,5})?/.*)?$)!
 
+  belongs_to :user
+
   validates :title,
             presence: true,
             length:   { minimum: 2 }
@@ -11,6 +13,11 @@ class Image < ActiveRecord::Base
               message: 'not a valid URL'
             }
   validates :tag_list, presence: true
+  validates :user, presence: true
 
   acts_as_taggable
+
+  def owned_by?(user)
+    self.user == user
+  end
 end
