@@ -77,6 +77,30 @@ class ImagesController < ApplicationController
     end
   end
 
+  def favorite_toggle
+    @image = Image.find_by(id: params[:id])
+    if @image.present?
+      if UserImageFavorite.exists?(user: @current_user, image: @image)
+        if params[:desire_favorite_state] == 'true'
+          favorite_toggle_json(true, @image.id)
+        else
+          UserImageFavorite.find_by(user: @current_user, image: @image).destroy!
+          favorite_toggle_json(false, @image.id)
+        end
+      else
+        if params[:desire_favorite_state] == 'true'
+          UserImageFavorite.create!(user: @current_user, image: @image)
+          favorite_toggle_json(true, @image.id)
+        else
+          favorite_toggle_json(false, @image.id)
+        end
+      end
+    else
+      flash[:danger] = 'Image does not exist'
+      head :not_found
+    end
+  end
+
   private
 
   def image_params
@@ -105,5 +129,11 @@ class ImagesController < ApplicationController
 
   def set_destroy_permission
     @user_can_destroy_image = @image.try(:owned_by?, @current_user)
+  end
+
+  def favorite_toggle_json(desire_favorite_state, image_id)
+    render json: { desire_favorite_state: desire_favorite_state,
+                   count: UserImageFavorite.where(image: @image).count,
+                   image_id: image_id }
   end
 end

@@ -24,3 +24,8 @@
     <span class="fa fa-pencil-square-o"></span> Edit Tags
   <% end %>
 <% end %>
+<% if @current_user.present? %>
+  <%= render partial: 'favorite_toggle',
+             locals: { image: image,
+                       desire_favorite_state: !UserImageFavorite.exists?(image: image, user: @current_user) } %>
+<% end %>

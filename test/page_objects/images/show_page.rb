@@ -25,7 +25,7 @@ module PageObjects
         node.click_on('Delete')
         alert = node.driver.browser.switch_to.alert
         alert.accept
-        window.change_to(IndexPage)
+        window.change_to(IndexPage, self.class)
       end
 
       def go_back_to_index!

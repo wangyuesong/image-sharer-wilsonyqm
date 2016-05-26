@@ -31,6 +31,18 @@ module PageObjects
         block.call(share_modal)
         share_modal.wait_until_hidden
       end
+
+      def favorite_toggle
+        node.click_on('Like')
+      end
+
+      def favorite_count
+        node.find('.js-favorite-count').text()
+      end
+
+      def favorite_status
+        node.has_css?('#favorite_btn_fa.fa-heart')
+      end
     end
   end
 end
