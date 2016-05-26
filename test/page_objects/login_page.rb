@@ -16,7 +16,7 @@ module PageObjects
       self.email.set(email) if email.present?
       self.password.set(password) if password.present?
       node.click_on('Log in')
-      window.change_to(Images::IndexPage, self.class)
+      window.change_to(Images::IndexPage, Images::NewPage, self.class)
     end
   end
 end

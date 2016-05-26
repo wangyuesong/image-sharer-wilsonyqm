@@ -1,5 +1,8 @@
 class ImagesController < ApplicationController
   before_action :find_image, only: [:show, :edit, :update]
+  before_action :find_image_without_raising, only: [:destroy, :share]
+  before_action :require_login, except: [:index, :show]
+  before_action :set_destroy_permission, only: [:show, :destroy]
 
   def index
     tag = params[:tag]
@@ -12,6 +15,7 @@ class ImagesController < ApplicationController
   end
 
   def show
+    @image = Image.find(params[:id])
   end
 
   def new
@@ -19,7 +23,7 @@ class ImagesController < ApplicationController
   end
 
   def create
-    @image = Image.new(image_params)
+    @image = Image.new(image_params.merge(user: @current_user))
     if @image.save
       redirect_to @image
       flash[:success] = 'You have successfully added an image.'
@@ -29,7 +33,6 @@ class ImagesController < ApplicationController
   end
 
   def share
-    @image = Image.find_by(id: params[:id])
     if @image.present?
       @share_form = ShareForm.new(params[:share_form])
       if @share_form.valid?
@@ -46,14 +49,19 @@ class ImagesController < ApplicationController
   end
 
   def destroy
-    @image = Image.find_by(id: params[:id])
     if @image.present?
-      flash[:success] = 'Image deleted'
-      @image.destroy!
+      if @user_can_destroy_image
+        flash[:success] = 'Image deleted'
+        @image.destroy!
+        redirect_to images_path
+      else
+        flash[:warning] = 'You can not delete this image'
+        redirect_to image_path(@image)
+      end
     else
       flash[:danger] = 'Image does not exist'
+      redirect_to images_path
     end
-    redirect_to images_path
   end
 
   def edit
@@ -75,7 +83,27 @@ class ImagesController < ApplicationController
     params.require(:image).permit(:title, :url, :tag_list)
   end
 
+  def require_login
+    unless logged_in?
+      session[:forwarding_url] = request.url if request.get?
+      flash[:warning] = 'Please log in first'
+      if request.xhr?
+        head :unauthorized
+      else
+        redirect_to login_path
+      end
+    end
+  end
+
   def find_image
     @image = Image.find(params[:id])
+  end
+
+  def find_image_without_raising
+    @image = Image.find_by(id: params[:id])
+  end
+
+  def set_destroy_permission
+    @user_can_destroy_image = @image.try(:owned_by?, @current_user)
   end
 end

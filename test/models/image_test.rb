@@ -53,4 +53,25 @@ class ImageTest < ActiveSupport::TestCase
     assert_predicate image, :invalid?
     assert_equal ["can't be blank"], image.errors[:tag_list]
   end
+
+  test 'image require user' do
+    user = User.new(
+      name: 'Example User',
+      email: 'user@example.com',
+      password: 'foobar',
+      password_confirmation: 'foobar'
+    )
+    image = new_image(user: user)
+    assert_predicate image, :valid?
+
+    image = new_image(user: nil)
+    assert_predicate image, :invalid?
+    assert_equal ["can't be blank"], image.errors[:user]
+  end
+
+  test 'owned_by?' do
+    image = create_image(user: users(:default_user))
+    refute image.owned_by?(users(:other_user))
+    assert image.owned_by?(users(:default_user))
+  end
 end

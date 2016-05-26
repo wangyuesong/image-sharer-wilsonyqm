@@ -5,9 +5,11 @@
       <%= nav_item(text: 'ImageList',
                    path: root_path,
                    is_active: current_page?(images_path) || current_page?(root_path)) %>
-      <%= nav_item(text: 'Create',
-                   path: new_image_path,
-                   is_active: current_page?(new_image_path)) %>
+      <% if @current_user.present? %>
+        <%= nav_item(text: 'Create',
+                     path: new_image_path,
+                     is_active: current_page?(new_image_path)) %>
+      <% end %>
       <%= nav_item(text: 'All Tags',
                          path: tags_path,
                          is_active: current_page?(tags_path)) %>

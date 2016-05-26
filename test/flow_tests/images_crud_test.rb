@@ -3,9 +3,13 @@ require 'flow_test_helper'
 class ImagesCrudTest < FlowTestCase
   include ImageCreation
 
-  test 'add an image' do
-    images_index_page = PageObjects::Images::IndexPage.visit
+  teardown do
+    Capybara.current_session.reset!
+  end
 
+  test 'add an image' do
+    log_in_as(users(:default_user))
+    images_index_page = PageObjects::Images::IndexPage.visit
     new_image_page = images_index_page.add_new_image!
 
     tags = %w(foo bar)
@@ -34,6 +38,7 @@ class ImagesCrudTest < FlowTestCase
       { url: ugly_cat_url, tag_list: 'cat, ugly', title: 'test2' }
     ])
 
+    log_in_as(users(:default_user))
     images_index_page = PageObjects::Images::IndexPage.visit
     assert_equal 2, images_index_page.images.count
     assert images_index_page.is_showing_image?(url: ugly_cat_url)
@@ -59,8 +64,10 @@ class ImagesCrudTest < FlowTestCase
 
   test 'try to delete a nonexistent image' do
     ugly_cat_url = 'http://www.ugly-cat.com/ugly-cats/uglycat041.jpg'
-    image = create_image(url: ugly_cat_url, tag_list: 'cat, ugly', title: 'test2' )
+    image = create_image(url: ugly_cat_url, tag_list: 'cat, ugly', title: 'test2')
+    log_in_as(users(:default_user))
     images_index_page = PageObjects::Images::IndexPage.visit
+
     assert_equal 1, images_index_page.images.count
     assert images_index_page.is_showing_image?(url: ugly_cat_url)
     image_to_delete = images_index_page.images.find do |image|
@@ -136,7 +143,9 @@ class ImagesCrudTest < FlowTestCase
       { url: puppy_url_2, tag_list: 'cute, puppy', title: 'test2' },
       { url: cat_url, tag_list: 'cat, ugly', title: 'test3' }
     ])
+    log_in_as(users(:default_user))
     images_index_page = PageObjects::Images::IndexPage.visit
+
     image_to_edit = images_index_page.images.find do |image|
       image.url == cat_url
     end

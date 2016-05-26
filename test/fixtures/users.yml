@@ -1,0 +1,9 @@
+default_user:
+  email: defaultuser@email.com
+  name: name
+  password_digest: <%= BCrypt::Password.create('password', cost: BCrypt::Engine::MIN_COST) %>
+
+other_user:
+  email: otheruser@email.com
+  name: otheruser
+  password_digest: <%= BCrypt::Password.create('password', cost: BCrypt::Engine::MIN_COST) %>
