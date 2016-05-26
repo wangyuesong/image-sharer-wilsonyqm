@@ -43,6 +43,15 @@ ActiveRecord::Schema.define(version: 20160524002038) do
 
   add_index "tags", ["name"], name: "index_tags_on_name", unique: true
 
+  create_table "user_image_favorites", force: :cascade do |t|
+    t.integer  "user_id",    null: false
+    t.integer  "image_id",   null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "user_image_favorites", ["user_id", "image_id"], name: "index_user_image_favorites_on_user_id_and_image_id", unique: true
+
   create_table "users", force: :cascade do |t|
     t.string   "name",            null: false
     t.string   "email",           null: false
