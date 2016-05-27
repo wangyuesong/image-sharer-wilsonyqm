@@ -1,6 +1,6 @@
 class ImagesController < ApplicationController
   before_action :find_image, only: [:show, :edit, :update]
-  before_action :find_image_without_raising, only: [:destroy, :share]
+  before_action :find_image_without_raising, only: [:destroy, :share, :toggle_favorite]
   before_action :require_login, except: [:index, :show]
   before_action :set_destroy_permission, only: [:show, :destroy]
 
@@ -23,7 +23,7 @@ class ImagesController < ApplicationController
   end
 
   def create
-    @image = Image.new(image_params.merge(user: @current_user))
+    @image = Image.new(image_params.merge(user: @current_user, favorites_count: 0))
     if @image.save
       redirect_to @image
       flash[:success] = 'You have successfully added an image.'
@@ -77,19 +77,18 @@ class ImagesController < ApplicationController
     end
   end
 
-  def favorite_toggle
-    @image = Image.find_by(id: params[:id])
+  def toggle_favorite
     if @image.present?
-      if UserImageFavorite.exists?(user: @current_user, image: @image)
+      if ImageFavorite.exists?(user: @current_user, image: @image)
         if params[:desire_favorite_state] == 'true'
           favorite_toggle_json(true, @image.id)
         else
-          UserImageFavorite.find_by(user: @current_user, image: @image).destroy!
+          ImageFavorite.find_by(user: @current_user, image: @image).destroy!
           favorite_toggle_json(false, @image.id)
         end
       else
         if params[:desire_favorite_state] == 'true'
-          UserImageFavorite.create!(user: @current_user, image: @image)
+          ImageFavorite.create!(user: @current_user, image: @image)
           favorite_toggle_json(true, @image.id)
         else
           favorite_toggle_json(false, @image.id)
@@ -132,8 +131,9 @@ class ImagesController < ApplicationController
   end
 
   def favorite_toggle_json(desire_favorite_state, image_id)
+    @image.reload.favorites_count
     render json: { desire_favorite_state: desire_favorite_state,
-                   count: UserImageFavorite.where(image: @image).count,
+                   count: @image.favorites_count,
                    image_id: image_id }
   end
 end

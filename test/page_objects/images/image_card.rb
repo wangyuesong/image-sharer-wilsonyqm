@@ -34,6 +34,7 @@ module PageObjects
 
       def favorite_toggle
         node.click_on('Like')
+        # Capybara.current_session.driver.execute_script("$('.js-favorite-image').trigger('click')")
       end
 
       def favorite_count

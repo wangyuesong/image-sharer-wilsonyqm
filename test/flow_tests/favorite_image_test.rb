@@ -41,11 +41,11 @@ class FavoriteImageTest < FlowTestCase
     image_to_favorite = images_index_page.images.find do |image|
       image.url == ugly_cat_url
     end
-    UserImageFavorite.create!(user: users(:default_user), image: images[1])
+    ImageFavorite.create!(user: users(:default_user), image: images[1])
     assert_unfavorite(image_to_favorite)
     image_to_favorite.favorite_toggle
     assert_favorite(image_to_favorite)
-    UserImageFavorite.find_by(user: users(:default_user), image: images[1]).destroy!
+    ImageFavorite.find_by(user: users(:default_user), image: images[1]).destroy!
     image_to_favorite.favorite_toggle
     assert_unfavorite(image_to_favorite)
   end

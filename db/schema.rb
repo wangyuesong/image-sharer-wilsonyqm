@@ -11,14 +11,24 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160524002038) do
+ActiveRecord::Schema.define(version: 20160527195358) do
 
-  create_table "images", force: :cascade do |t|
-    t.string   "title",      null: false
-    t.string   "url",        null: false
+  create_table "image_favorites", force: :cascade do |t|
+    t.integer  "user_id",    null: false
+    t.integer  "image_id",   null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer  "user_id",    null: false
+  end
+
+  add_index "image_favorites", ["user_id", "image_id"], name: "index_image_favorites_on_user_id_and_image_id", unique: true
+
+  create_table "images", force: :cascade do |t|
+    t.string   "title",                       null: false
+    t.string   "url",                         null: false
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
+    t.integer  "user_id",                     null: false
+    t.integer  "favorites_count", default: 0
   end
 
   add_index "images", ["user_id"], name: "index_images_on_user_id"
@@ -42,15 +52,6 @@ ActiveRecord::Schema.define(version: 20160524002038) do
   end
 
   add_index "tags", ["name"], name: "index_tags_on_name", unique: true
-
-  create_table "user_image_favorites", force: :cascade do |t|
-    t.integer  "user_id",    null: false
-    t.integer  "image_id",   null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  add_index "user_image_favorites", ["user_id", "image_id"], name: "index_user_image_favorites_on_user_id_and_image_id", unique: true
 
   create_table "users", force: :cascade do |t|
     t.string   "name",            null: false

@@ -1,14 +1,16 @@
-<div id="image_card">
-  <%= render @image %>
-  <% if @user_can_destroy_image %>
-    <%= link_to image_path(@image), method: :delete, 'data-confirm': 'Are you sure?',
-                class: 'btn btn-danger' do %>
-      <span class="js-delete-btn fa fa-trash"></span> Delete
+<div class="js-image-card">
+  <div id="image_show" data-image-id="<%= @image.id %>">
+    <%= render @image %>
+    <% if @user_can_destroy_image %>
+      <%= link_to image_path(@image), method: :delete, 'data-confirm': 'Are you sure?',
+                  class: 'btn btn-danger' do %>
+        <span class="js-delete-btn fa fa-trash"></span> Delete
+      <% end %>
     <% end %>
-  <% end %>
-  <%= link_to images_path, class: 'btn btn-secondary' do %>
-    <span class="js-back-btn fa fa-arrow-left"></span> Back
-  <% end %>
+    <%= link_to images_path, class: 'btn btn-secondary' do %>
+      <span class="js-back-btn fa fa-arrow-left"></span> Back
+    <% end %>
+  </div>
 </div>
 
 <%= render partial: 'share_modal' %>
@@ -16,3 +18,4 @@
 <% content_for :javascript do %>
   <%= javascript_include_tag 'images/show' %>
 <% end %>
+

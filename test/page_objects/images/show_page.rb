@@ -3,7 +3,7 @@ module PageObjects
     class ShowPage < PageObjects::Document
       path :image
 
-      element :image_card, is: ImageCard
+      element :image_card, is: ImageCard, locator: '.js-image-card'
       delegate :share, to: :image_card
 
       collection :tag_elements, locator: '.image-detail__tags', item_locator: '.js-image-tag'

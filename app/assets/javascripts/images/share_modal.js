@@ -1,9 +1,6 @@
 import $ from 'jquery';
 import setFlashMessage from './set_flash_message'
-
-const UNPROCESSABLE_ENTITY = 422;
-const NOT_FOUND = 404;
-const UNAUTHORIZED = 401;
+import AjaxErrorHandler from './ajax_error_handler'
 
 class ShareModal {
   constructor(modalSelector) {
@@ -30,15 +27,7 @@ class ShareModal {
       this.$modal.modal('hide');
     });
     this.$modal.on('ajax:error', (event, {status, responseJSON}) => {
-      if (status == UNPROCESSABLE_ENTITY) {
-        this.$modal.find('form').replaceWith(responseJSON.form_html);
-      } else if (status == NOT_FOUND) {
-        window.location = '/';
-      } else if (status == UNAUTHORIZED) {
-        window.location = '/login';
-      } else {
-        alert('Sorry, an unexpected error occurred. Please try again');
-      }
+      AjaxErrorHandler(this.$modal, status, responseJSON);
     });
   }
 }

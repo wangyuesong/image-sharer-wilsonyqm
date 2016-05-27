@@ -104,7 +104,7 @@ class ImagesControllerTest < ActionController::TestCase
       post :create, image: {
         title: 'some image',
         url: 'http://someawesomeimage.com',
-        tag_list: 'create_test',
+        tag_list: 'create_test'
       }
     end
     assert_redirected_to image_path(Image.last)
@@ -115,7 +115,7 @@ class ImagesControllerTest < ActionController::TestCase
       post :create, image: {
         title: 'some image',
         url: 'http://someawesomeimage.com',
-        tag_list: 'create_test',
+        tag_list: 'create_test'
       }
     end
     assert_redirected_to_login
@@ -151,7 +151,7 @@ class ImagesControllerTest < ActionController::TestCase
 
     get :show, id: image
     assert_response :success
-    assert_select "#image_card img[src=\"#{image_url}\"]", 1
+    assert_select "#image_show img[src=\"#{image_url}\"]", 1
     assert_select '.image-detail__title', text: 'test3Img'
     assert_select '.js-share-btn', count: 0
     assert_select '.js-edit-tags', count: 0
@@ -169,7 +169,7 @@ class ImagesControllerTest < ActionController::TestCase
 
     get :show, id: image
     assert_response :success
-    assert_select "#image_card img[src=\"#{image_url}\"]", 1
+    assert_select "#image_show img[src=\"#{image_url}\"]", 1
     assert_select '.image-detail__title', text: 'test3Img'
     assert_select '.js-share-btn', count: 1
     assert_select '.js-edit-tags', count: 1
@@ -187,7 +187,7 @@ class ImagesControllerTest < ActionController::TestCase
 
     get :show, id: image
     assert_response :success
-    assert_select "#image_card img[src=\"#{image_url}\"]", 1
+    assert_select "#image_show img[src=\"#{image_url}\"]", 1
     assert_select '.image-detail__title', text: 'test3Img'
     assert_select '.js-share-btn', count: 1
     assert_select '.js-edit-tags', count: 1
@@ -420,12 +420,12 @@ class ImagesControllerTest < ActionController::TestCase
     image = create_image(title: 'test3Img', url: image_url, tag_list: 'tag')
     params = { id: image, desire_favorite_state: 'true' }
 
-    refute UserImageFavorite.exists?(image: image, user: users(:default_user))
+    refute ImageFavorite.exists?(image: image, user: users(:default_user))
 
-    xhr :post, :favorite_toggle, params
+    xhr :post, :toggle_favorite, params
 
     assert_response :success
-    assert UserImageFavorite.exists?(image: image, user: users(:default_user))
+    assert ImageFavorite.exists?(image: image, user: users(:default_user))
     response = JSON.parse(@response.body)
     assert_equal 1, response['count']
     assert response['desire_favorite_state'], 'The desire favorite state should be true'
@@ -437,14 +437,14 @@ class ImagesControllerTest < ActionController::TestCase
     image_url = 'http://www.horniman.info/DKNSARC/SD04/IMAGES/D4P1570C.JPG'
     image = create_image(title: 'test3Img', url: image_url, tag_list: 'tag')
     params = { id: image, desire_favorite_state: 'true' }
-    UserImageFavorite.create!(user: users(:default_user), image: image)
+    ImageFavorite.create!(user: users(:default_user), image: image)
 
-    assert UserImageFavorite.exists?(image: image, user: users(:default_user))
+    assert ImageFavorite.exists?(image: image, user: users(:default_user))
 
-    xhr :post, :favorite_toggle, params
+    xhr :post, :toggle_favorite, params
 
     assert_response :success
-    assert UserImageFavorite.exists?(image: image, user: users(:default_user))
+    assert ImageFavorite.exists?(image: image, user: users(:default_user))
     response = JSON.parse(@response.body)
     assert_equal 1, response['count']
     assert response['desire_favorite_state'], 'The desire favorite state should be true'
@@ -456,7 +456,7 @@ class ImagesControllerTest < ActionController::TestCase
     image = create_image(title: 'test3Img', url: image_url, tag_list: 'tag')
 
     params = { id: image, desire_favorite_state: 'true' }
-    xhr :post, :favorite_toggle, params
+    xhr :post, :toggle_favorite, params
 
     assert_response :unauthorized
     assert_equal 'Please log in first', flash[:warning]
@@ -465,7 +465,7 @@ class ImagesControllerTest < ActionController::TestCase
   test 'favorite deleted image' do
     log_in(users(:default_user))
     params = { id: -1, desire_favorite_state: 'true' }
-    xhr :post, :favorite_toggle, params
+    xhr :post, :toggle_favorite, params
 
     assert_response :not_found
     assert_equal 'Image does not exist', flash[:danger]
@@ -476,14 +476,14 @@ class ImagesControllerTest < ActionController::TestCase
     image_url = 'http://www.horniman.info/DKNSARC/SD04/IMAGES/D4P1570C.JPG'
     image = create_image(title: 'test3Img', url: image_url, tag_list: 'tag')
     params = { id: image, desire_favorite_state: 'false' }
-    UserImageFavorite.create!(user: users(:default_user), image: image)
+    ImageFavorite.create!(user: users(:default_user), image: image)
 
-    assert UserImageFavorite.exists?(image: image, user: users(:default_user))
+    assert ImageFavorite.exists?(image: image, user: users(:default_user))
 
-    xhr :post, :favorite_toggle, params
+    xhr :post, :toggle_favorite, params
 
     assert_response :success
-    refute UserImageFavorite.exists?(image: image, user: users(:default_user))
+    refute ImageFavorite.exists?(image: image, user: users(:default_user))
     response = JSON.parse(@response.body)
     assert_equal 0, response['count']
     refute response['desire_favorite_state'], 'The desire favorite state should be false'
@@ -496,12 +496,12 @@ class ImagesControllerTest < ActionController::TestCase
     image = create_image(title: 'test3Img', url: image_url, tag_list: 'tag')
     params = { id: image, desire_favorite_state: 'false' }
 
-    refute UserImageFavorite.exists?(image: image, user: users(:default_user))
+    refute ImageFavorite.exists?(image: image, user: users(:default_user))
 
-    xhr :post, :favorite_toggle, params
+    xhr :post, :toggle_favorite, params
 
     assert_response :success
-    refute UserImageFavorite.exists?(image: image, user: users(:default_user))
+    refute ImageFavorite.exists?(image: image, user: users(:default_user))
     response = JSON.parse(@response.body)
     assert_equal 0, response['count']
     refute response['desire_favorite_state'], 'The desire favorite state should be false'
@@ -513,7 +513,7 @@ class ImagesControllerTest < ActionController::TestCase
     image = create_image(title: 'test3Img', url: image_url, tag_list: 'tag')
 
     params = { id: image, desire_favorite_state: 'false' }
-    xhr :post, :favorite_toggle, params
+    xhr :post, :toggle_favorite, params
 
     assert_response :unauthorized
     assert_equal 'Please log in first', flash[:warning]
@@ -522,7 +522,7 @@ class ImagesControllerTest < ActionController::TestCase
   test 'unfavorite delted image' do
     log_in(users(:default_user))
     params = { id: -1, desire_favorite_state: 'false' }
-    xhr :post, :favorite_toggle, params
+    xhr :post, :toggle_favorite, params
 
     assert_response :not_found
     assert_equal 'Image does not exist', flash[:danger]
