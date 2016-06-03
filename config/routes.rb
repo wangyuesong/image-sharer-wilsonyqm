@@ -5,8 +5,10 @@ Rails.application.routes.draw do
   # You can have the root of your site routed with "root"
   root 'images#index'
   resources :images do
-    post :share, on: :member
-    post :toggle_favorite, on: :member
+    member do
+      post :share
+      post :toggle_favorite
+    end
   end
   resources :tags, only: :index
 

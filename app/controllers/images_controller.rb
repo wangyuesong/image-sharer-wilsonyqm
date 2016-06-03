@@ -80,19 +80,11 @@ class ImagesController < ApplicationController
   def toggle_favorite
     if @image.present?
       if ImageFavorite.exists?(user: @current_user, image: @image)
-        if params[:desire_favorite_state] == 'true'
-          favorite_toggle_json(true, @image.id)
-        else
-          ImageFavorite.find_by(user: @current_user, image: @image).destroy!
-          favorite_toggle_json(false, @image.id)
-        end
+        ImageFavorite.find_by(user: @current_user, image: @image).destroy!
+        favorite_toggle_json(false, @image.id)
       else
-        if params[:desire_favorite_state] == 'true'
-          ImageFavorite.create!(user: @current_user, image: @image)
-          favorite_toggle_json(true, @image.id)
-        else
-          favorite_toggle_json(false, @image.id)
-        end
+        ImageFavorite.create!(user: @current_user, image: @image)
+        favorite_toggle_json(true, @image.id)
       end
     else
       flash[:danger] = 'Image does not exist'

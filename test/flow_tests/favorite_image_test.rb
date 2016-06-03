@@ -28,7 +28,7 @@ class FavoriteImageTest < FlowTestCase
 
   end
 
-  test 'favorite-toggle favorited image by other user and favorite-toggle unfavorited image by other user' do
+  test 'favorite favorited image and unfavorite unfavorited image' do
     cute_puppy_url = 'http://ghk.h-cdn.co/assets/16/09/980x490/landscape-1457107485-gettyimages-512366437.jpg'
     ugly_cat_url = 'http://www.ugly-cat.com/ugly-cats/uglycat041.jpg'
     images = create_images([
@@ -44,10 +44,10 @@ class FavoriteImageTest < FlowTestCase
     ImageFavorite.create!(user: users(:default_user), image: images[1])
     assert_unfavorite(image_to_favorite)
     image_to_favorite.favorite_toggle
-    assert_favorite(image_to_favorite)
-    ImageFavorite.find_by(user: users(:default_user), image: images[1]).destroy!
-    image_to_favorite.favorite_toggle
     assert_unfavorite(image_to_favorite)
+    image_to_favorite.favorite_toggle
+    ImageFavorite.find_by(user: users(:default_user), image: images[1]).destroy!
+    assert_favorite(image_to_favorite)
   end
 
   test 'favorite-toggle deleted image' do

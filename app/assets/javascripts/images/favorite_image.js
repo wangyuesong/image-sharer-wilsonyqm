@@ -1,5 +1,7 @@
 import $ from 'jquery';
-import AjaxErrorHandler from './ajax_error_handler'
+import generalErrorHandler from './general_error_handler'
+
+const favorite_btn_count = document.getElementById('favorite_btn_count').innerHTML;
 
 class FavoriteImage {
   constructor(favoriteSelector) {
@@ -10,21 +12,22 @@ class FavoriteImage {
     this.$favorite.on('ajax:success', (event, { desire_favorite_state, count, image_id }) => {
       this.setFavoriteButton(count, desire_favorite_state, image_id);
     });
-    this.$favorite.on('ajax:error', (event, {status, responseJSON}) => {
-      AjaxErrorHandler(this.$favorite, status, responseJSON)
+    this.$favorite.on('ajax:error', (event, {status}) => {
+      generalErrorHandler(status)
     });
   }
 
   setFavoriteButton(count, desire_favorite_state, image_id) {
-    var favorite_image = $('.js-image-card').find(`[data-image-id=${image_id}]`);
+    const favorite_image = $('.js-image-card').find(`[data-image-id=${image_id}]`);
+    const favorite_icon = favorite_image.find('.js-favorite-fa');
+    const favorite_count = favorite_image.find('.js-favorite-count');
+    const new_favorite_count = favorite_btn_count.replace('{some_count}', count);
     if (desire_favorite_state) {
-      favorite_image.find('#favorite_btn_fa').attr('class', 'fa fa-heart');
-      favorite_image.find('.js-favorite-image').attr('href', `/images/${image_id}/toggle_favorite?desire_favorite_state=false`);
+      favorite_icon.removeClass('fa-heart-o').addClass('fa-heart');
     } else {
-      favorite_image.find('#favorite_btn_fa').attr('class', 'fa fa-heart-o');
-      favorite_image.find('.js-favorite-image').attr('href', `/images/${image_id}/toggle_favorite?desire_favorite_state=true`);
+      favorite_icon.removeClass('fa-heart').addClass('fa-heart-o');
     }
-    favorite_image.find('.js-favorite-count').html(count);
+    favorite_count.replaceWith(new_favorite_count);
   }
 }
 

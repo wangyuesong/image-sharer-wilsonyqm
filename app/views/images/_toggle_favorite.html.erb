@@ -1,7 +1,7 @@
-<%= link_to toggle_favorite_image_path(image, desire_favorite_state: desire_favorite_state),
+<%= link_to toggle_favorite_image_path(image),
             method: :post,
             remote: true,
             class: 'js-favorite-image btn btn-secondary' do %>
-  <span id="favorite_btn_fa" class="fa fa-heart<%='-o' if desire_favorite_state %>"></span> Like
+  <span class="js-favorite-fa fa fa-heart<%='-o' if !ImageFavorite.exists?(image: image, user: @current_user) %>"></span> Like
   <span class="js-favorite-count"><%= image.favorites_count %></span>
 <% end %>

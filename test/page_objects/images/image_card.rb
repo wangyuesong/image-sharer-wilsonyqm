@@ -42,7 +42,7 @@ module PageObjects
       end
 
       def favorite_status
-        node.has_css?('#favorite_btn_fa.fa-heart')
+        node.has_css?('.js-favorite-fa.fa-heart')
       end
     end
   end

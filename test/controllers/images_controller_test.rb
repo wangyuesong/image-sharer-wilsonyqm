@@ -432,24 +432,6 @@ class ImagesControllerTest < ActionController::TestCase
     assert_equal image.id, response['image_id']
   end
 
-  test 'favorite favorited image' do
-    log_in(users(:default_user))
-    image_url = 'http://www.horniman.info/DKNSARC/SD04/IMAGES/D4P1570C.JPG'
-    image = create_image(title: 'test3Img', url: image_url, tag_list: 'tag')
-    params = { id: image, desire_favorite_state: 'true' }
-    ImageFavorite.create!(user: users(:default_user), image: image)
-
-    assert ImageFavorite.exists?(image: image, user: users(:default_user))
-
-    xhr :post, :toggle_favorite, params
-
-    assert_response :success
-    assert ImageFavorite.exists?(image: image, user: users(:default_user))
-    response = JSON.parse(@response.body)
-    assert_equal 1, response['count']
-    assert response['desire_favorite_state'], 'The desire favorite state should be true'
-    assert_equal image.id, response['image_id']
-  end
 
   test 'favorite image when not logged in' do
     image_url = 'http://www.horniman.info/DKNSARC/SD04/IMAGES/D4P1570C.JPG'
@@ -479,24 +461,6 @@ class ImagesControllerTest < ActionController::TestCase
     ImageFavorite.create!(user: users(:default_user), image: image)
 
     assert ImageFavorite.exists?(image: image, user: users(:default_user))
-
-    xhr :post, :toggle_favorite, params
-
-    assert_response :success
-    refute ImageFavorite.exists?(image: image, user: users(:default_user))
-    response = JSON.parse(@response.body)
-    assert_equal 0, response['count']
-    refute response['desire_favorite_state'], 'The desire favorite state should be false'
-    assert_equal image.id, response['image_id']
-  end
-
-  test 'unfavorite unfavorited image' do
-    log_in(users(:default_user))
-    image_url = 'http://www.horniman.info/DKNSARC/SD04/IMAGES/D4P1570C.JPG'
-    image = create_image(title: 'test3Img', url: image_url, tag_list: 'tag')
-    params = { id: image, desire_favorite_state: 'false' }
-
-    refute ImageFavorite.exists?(image: image, user: users(:default_user))
 
     xhr :post, :toggle_favorite, params
 

@@ -1,6 +1,7 @@
 import $ from 'jquery';
 import setFlashMessage from './set_flash_message'
-import AjaxErrorHandler from './ajax_error_handler'
+import generalErrorHandler from './general_error_handler'
+import {UNPROCESSABLE_ENTITY} from './http_status_const';
 
 class ShareModal {
   constructor(modalSelector) {
@@ -27,7 +28,11 @@ class ShareModal {
       this.$modal.modal('hide');
     });
     this.$modal.on('ajax:error', (event, {status, responseJSON}) => {
-      AjaxErrorHandler(this.$modal, status, responseJSON);
+      if (status == UNPROCESSABLE_ENTITY) {
+        this.$modal.find('form').replaceWith(responseJSON.form_html);
+      } else {
+        generalErrorHandler(status);
+      }
     });
   }
 }
