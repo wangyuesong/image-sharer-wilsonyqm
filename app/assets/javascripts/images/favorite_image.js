@@ -3,7 +3,7 @@ import generalErrorHandler from './general_error_handler'
 
 const favorite_btn_count = document.getElementById('favorite_btn_count').innerHTML;
 
-class FavoriteImage {
+class FavoriteHandler {
   constructor(favoriteSelector) {
     this.$favorite = $(favoriteSelector);
   }
@@ -31,4 +31,4 @@ class FavoriteImage {
   }
 }
 
-export default FavoriteImage;
+export default FavoriteHandler;

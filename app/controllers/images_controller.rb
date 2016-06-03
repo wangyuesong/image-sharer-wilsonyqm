@@ -1,6 +1,7 @@
 class ImagesController < ApplicationController
   before_action :find_image, only: [:show, :edit, :update]
-  before_action :find_image_without_raising, only: [:destroy, :share, :toggle_favorite]
+  before_action :find_image_head_not_found_when_not_found, only: [:share, :toggle_favorite]
+  before_action :find_image_redirect_when_not_found, only: :destroy
   before_action :require_login, except: [:index, :show]
   before_action :set_destroy_permission, only: [:show, :destroy]
 
@@ -33,34 +34,24 @@ class ImagesController < ApplicationController
   end
 
   def share
-    if @image.present?
-      @share_form = ShareForm.new(params[:share_form])
-      if @share_form.valid?
-        ImageMailer.send_email(@image, @share_form, @current_user).deliver_now
-        head :ok
-      else
-        share_form_html = render_to_string partial: 'images/share_form'
-        render json: { form_html: share_form_html }, status: :unprocessable_entity
-      end
+    @share_form = ShareForm.new(params[:share_form])
+    if @share_form.valid?
+      ImageMailer.send_email(@image, @share_form, @current_user).deliver_now
+      head :ok
     else
-      flash[:danger] = 'Image you want to share does not exist'
-      head :not_found
+      share_form_html = render_to_string partial: 'images/share_form'
+      render json: { form_html: share_form_html }, status: :unprocessable_entity
     end
   end
 
   def destroy
-    if @image.present?
-      if @user_can_destroy_image
-        flash[:success] = 'Image deleted'
-        @image.destroy!
-        redirect_to images_path
-      else
-        flash[:warning] = 'You can not delete this image'
-        redirect_to image_path(@image)
-      end
-    else
-      flash[:danger] = 'Image does not exist'
+    if @user_can_destroy_image
+      flash[:success] = 'Image deleted'
+      @image.destroy!
       redirect_to images_path
+    else
+      flash[:warning] = 'You can not delete this image'
+      redirect_to image_path(@image)
     end
   end
 
@@ -78,17 +69,12 @@ class ImagesController < ApplicationController
   end
 
   def toggle_favorite
-    if @image.present?
-      if ImageFavorite.exists?(user: @current_user, image: @image)
-        ImageFavorite.find_by(user: @current_user, image: @image).destroy!
-        favorite_toggle_json(false, @image.id)
-      else
-        ImageFavorite.create!(user: @current_user, image: @image)
-        favorite_toggle_json(true, @image.id)
-      end
+    if favorite = ImageFavorite.find_by(user: @current_user, image: @image)
+      favorite.destroy!
+      favorite_toggle_json(false, @image.id)
     else
-      flash[:danger] = 'Image does not exist'
-      head :not_found
+      ImageFavorite.create!(user: @current_user, image: @image)
+      favorite_toggle_json(true, @image.id)
     end
   end
 
@@ -114,8 +100,20 @@ class ImagesController < ApplicationController
     @image = Image.find(params[:id])
   end
 
-  def find_image_without_raising
+  def find_image_head_not_found_when_not_found
     @image = Image.find_by(id: params[:id])
+    unless @image.present?
+      flash[:danger] = 'Image does not exist'
+      head :not_found
+    end
+  end
+
+  def find_image_redirect_when_not_found
+    @image = Image.find_by(id: params[:id])
+    unless @image.present?
+      flash[:danger] = 'Image does not exist'
+      redirect_to images_path
+    end
   end
 
   def set_destroy_permission

@@ -393,7 +393,7 @@ class ImagesControllerTest < ActionController::TestCase
       xhr :post, :share, params
     end
     assert_response :not_found
-    assert_equal 'Image you want to share does not exist', flash[:danger]
+    assert_equal 'Image does not exist', flash[:danger]
   end
 
   test 'share when not logged in' do

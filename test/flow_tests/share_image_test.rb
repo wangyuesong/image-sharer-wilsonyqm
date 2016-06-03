@@ -42,7 +42,7 @@ class ShareImageTest < FlowTestCase
     share_modal.share_image
 
     images_index_page = AePageObjects.browser.current_window.change_to(PageObjects::Images::IndexPage)
-    assert_equal 'Image you want to share does not exist', images_index_page.flash_message(:danger)
+    assert_equal 'Image does not exist', images_index_page.flash_message(:danger)
     assert_equal 0, images_index_page.images.count
   end
 
