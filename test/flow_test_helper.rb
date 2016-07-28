@@ -6,7 +6,10 @@ require 'capybara/dsl'
 require 'ae_page_objects'
 require 'securerandom'
 
-Dir[File.dirname(__FILE__) + '/page_objects/**/*.rb'].each { |file| require file }
+#Dir[File.dirname(__FILE__) + '/page_objects/**/*.rb'].each { |file| require file }
+Dir[File.dirname(__FILE__) + '/page_objects/document.rb'].each { |file| require file }
+Dir[File.dirname(__FILE__) + '/page_objects/*.rb'].each { |file| require file }
+
 
 class FlowTestCase < ActiveSupport::TestCase
   include Capybara::DSL
@@ -40,13 +43,13 @@ ActiveRecord::Base.shared_connection = ActiveRecord::Base.connection
 Capybara.register_driver :remote_browser do |app|
   capabilities = {uuid: SecureRandom.hex}
   Capybara::Selenium::Driver.new(app, :browser => :remote,
-                                 :url => HUB-URL,
+                                 :url => 'http://54.237.218.229:4444/wd/hub',
                                  :desired_capabilities => Selenium::WebDriver::Remote::Capabilities.new(capabilities))
 end
 Capybara.current_driver = :remote_browser
 Capybara.server_port = 3000
 Capybara.server_host = '0.0.0.0'
-Capybara.app_host = APP-HOST
+Capybara.app_host = '172.31.2.27' 
 
 module PageObjects
   class Site < AePageObjects::Site
