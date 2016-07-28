@@ -4,6 +4,7 @@ require 'active_support/test_case'
 require 'capybara/rails'
 require 'capybara/dsl'
 require 'ae_page_objects'
+require 'securerandom'
 
 Dir[File.dirname(__FILE__) + '/page_objects/**/*.rb'].each { |file| require file }
 
@@ -35,7 +36,17 @@ end
 # Capybara because it starts the web server in a thread.
 ActiveRecord::Base.shared_connection = ActiveRecord::Base.connection
 
-Capybara.default_driver = Capybara.javascript_driver
+# Capybara.default_driver = Capybara.javascript_driver
+Capybara.register_driver :remote_browser do |app|
+  capabilities = {uuid: SecureRandom.hex}
+  Capybara::Selenium::Driver.new(app, :browser => :remote,
+                                 :url => HUB-URL,
+                                 :desired_capabilities => Selenium::WebDriver::Remote::Capabilities.new(capabilities))
+end
+Capybara.current_driver = :remote_browser
+Capybara.server_port = 3000
+Capybara.server_host = '0.0.0.0'
+Capybara.app_host = APP-HOST
 
 module PageObjects
   class Site < AePageObjects::Site
