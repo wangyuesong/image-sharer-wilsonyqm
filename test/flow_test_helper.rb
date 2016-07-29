@@ -6,7 +6,9 @@ require 'capybara/dsl'
 require 'ae_page_objects'
 require 'securerandom'
 
-#Dir[File.dirname(__FILE__) + '/page_objects/**/*.rb'].each { |file| require file }
+require 'socket'
+
+Dir[File.dirname(__FILE__) + '/page_objects/**/*.rb'].each { |file| require file }
 Dir[File.dirname(__FILE__) + '/page_objects/document.rb'].each { |file| require file }
 Dir[File.dirname(__FILE__) + '/page_objects/*.rb'].each { |file| require file }
 
@@ -35,21 +37,45 @@ class ActiveRecord::Base
   end
 end
 
+
+def private_ipv4
+  Socket.ip_address_list.detect{|intf| intf.ipv4_private?}.ip_address
+end
+
+def public_ipv4
+  Socket.ip_address_list.detect{|intf| intf.ipv4? and !intf.ipv4_loopback? and !intf.ipv4_multicast? and !intf.ipv4_private?}.ip_address
+end
+
 # Forces all threads to share the same connection. This works on
 # Capybara because it starts the web server in a thread.
 ActiveRecord::Base.shared_connection = ActiveRecord::Base.connection
 
 # Capybara.default_driver = Capybara.javascript_driver
 Capybara.register_driver :remote_browser do |app|
-  capabilities = {uuid: SecureRandom.hex}
+  # capabilities = {uuid: SecureRandom.hex}
+  # ,
+      # :desired_capabilities => Selenium::WebDriver::Remote::Capabilities.new(capabilities)
   Capybara::Selenium::Driver.new(app, :browser => :remote,
-                                 :url => 'http://54.237.218.229:4444/wd/hub',
-                                 :desired_capabilities => Selenium::WebDriver::Remote::Capabilities.new(capabilities))
+                                 :url => 'http://172.31.29.85:4444/wd/hub')
 end
+# ENV['HTTP_PROXY'] = ENV['http_proxy'] = nil
 Capybara.current_driver = :remote_browser
-Capybara.server_port = 3000
+if ENV['TEST_ENV_NUMBER'].nil?
+  Capybara.server_port = 4000
+else
+  Capybara.server_port = "400#{ENV['TEST_ENV_NUMBER']}".to_i
+end
+
 Capybara.server_host = '0.0.0.0'
-Capybara.app_host = '172.31.2.27' 
+if ENV['TEST_ENV_NUMBER'].nil?
+  Capybara.app_host = "http://#{private_ipv4}:4000"
+else
+  Capybara.app_host = "http://#{private_ipv4}:400#{ENV['TEST_ENV_NUMBER']}"
+end
+
+
+# Capybara.default_driver = Capybara.javascript_driver
+
 
 module PageObjects
   class Site < AePageObjects::Site

@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-ruby '2.3.0'
+ruby '2.2.3'
 
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
@@ -70,3 +70,5 @@ source 'https://rails-assets.org' do
 end
 
 gem 'validates_email_format_of'
+
+gem 'parallel_tests', group: [:development, :test]
