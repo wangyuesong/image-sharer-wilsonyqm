@@ -39,7 +39,7 @@ end
 
 
 def private_ipv4
-  Socket.ip_address_list.detect{|intf| intf.ipv4_private?}.ip_address
+  '172.31.56.116'
 end
 
 def public_ipv4
