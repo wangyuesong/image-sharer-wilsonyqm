@@ -53,7 +53,7 @@ group :production do
 end
 
 group :test do
-  gem 'ae_page_objects'
+  gem 'ae_page_objects', '~>1.4.0'
   gem 'capybara'
   gem 'selenium-webdriver'
   gem 'mocha'
